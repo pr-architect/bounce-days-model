@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bounce Days: cost and break-even model</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#D42B30;--h:#2B2B2B;--b:#5E5E5E;--s:#8A8A8A;--line:#E6E3DF;--bg:#F4F3F1;--green:#178040;--amber:#9A5B00;--amber-bg:#FFF3DC}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Hanken Grotesk",system-ui,sans-serif;background:var(--bg);color:var(--h);line-height:1.3;font-size:14px;padding:28px 32px 60px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:24px;font-weight:700}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .reset{font:inherit;font-size:14px;font-weight:600;color:var(--red);background:#fff;border:1px solid #F0C4C5;border-radius:10px;padding:8px 14px;cursor:pointer}
+  .reset:hover{background:#FDECEC}
+  .dummy{display:inline-block;margin-top:10px;background:var(--amber-bg);color:var(--amber);font-weight:600;font-size:13px;padding:5px 10px;border-radius:8px}
+  section{background:#fff;border-radius:16px;padding:20px 22px;margin-top:18px}
+  h2{font-size:17px;font-weight:700}
+  h3{font-size:13px;font-weight:700;color:var(--b);text-transform:uppercase;letter-spacing:.4px;margin:18px 0 0}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+  .tile{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .tile .k{font-size:12.5px;color:var(--s)}
+  .tile .v{font-size:24px;font-weight:700;margin-top:6px}
+  .tile .d{font-size:12.5px;color:var(--b);margin-top:4px}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+  th{text-align:left;font-weight:600;color:var(--s);font-size:12.5px;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:6px 8px;border-bottom:1px solid #F0EEEB;vertical-align:middle}
+  th.r,td.r{text-align:right}
+  tr.tot td{font-weight:700;border-top:1px solid var(--line);border-bottom:0}
+  input[type=number]{width:84px;font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid #DCD8D3;border-radius:7px;background:#FBFAF9;text-align:right;color:var(--h)}
+  input[type=number]:focus{outline:none;border-color:var(--red);background:#fff}
+  input.sm{width:64px}
+  .inp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 18px;margin-top:10px}
+  .inp label{display:block;font-size:12.5px;color:var(--b);margin-bottom:5px}
+  .inp input[type=number]{width:100%}
+  .unit{color:var(--s);font-size:12px;margin-left:4px}
+  .derived{font-size:22px;font-weight:700;padding-top:2px}
+  .derived small{font-size:12.5px;font-weight:500;color:var(--b);margin-left:6px}
+  .ck{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;margin-top:12px}
+  .ck input{accent-color:var(--red)}
+  .scroll{overflow-x:auto}
+  .scroll.wk{max-height:217px;overflow-y:auto;margin-top:12px}
+  .scroll.wk table{margin-top:0}
+  .scroll.wk th{position:sticky;top:0;background:#fff;z-index:1}
+  .note{font-size:12.5px;color:var(--b);margin-top:12px;line-height:1.5}
+  .note b{color:var(--h)}
+  .rv{display:flex;align-items:center;gap:14px;margin-top:12px}
+  .rv label{font-size:14px;font-weight:600}
+  .rv input{width:100px}
+  .rv span{font-size:13px;color:var(--b)}
+  .neg{color:var(--s)}
+  td.how{color:var(--b);font-size:13px;padding-left:20px}
+  .formula{font-size:12.5px;color:var(--b);line-height:1.7;margin-top:8px}
+  .formula b{color:var(--h)}
+</style>
+</head>
+<body><div class="wrap">
+
+<div class="top"><h1>Bounce Days: cost and break-even model</h1><button class="reset" onclick="location.reload()">Reset all values</button></div>
+<span class="dummy">Retention and rent from data: riders whose first rental was on or after 15 Jan 2026, data to 24 Nov 2026. See "Where the numbers come from".</span>
+
+<section>
+  <h2>Retention Variable</h2>
+  <div class="rv"><label for="org">W4 retention variable</label><input type="number" id="org" value="0" step="0.5"><span id="orgNote"></span></div>
+  <p class="note">Use this to move the starting point away from history. <b>Positive</b> = retention will be better anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = retention gets worse anyway. The change is spread across every week the same way, so the shape of the curve stays as in history.</p>
+</section>
+
+<section>
+  <h2>Results</h2>
+  <div class="tiles" id="tiles"></div>
+</section>
+
+<section>
+  <h2>Inputs</h2>
+  <h3>Revenue</h3>
+  <div class="inp">
+    <div><label>Average rental per day <span class="unit">₹</span></label><input type="number" id="rent" value="295.5"></div>
+  </div>
+  <h3>Costs per rental day</h3>
+  <div class="inp">
+    <div><label>Energy <span class="unit">₹</span></label><input type="number" id="energy" value="80"></div>
+    <div><label>Maintenance <span class="unit">₹</span></label><input type="number" id="maint" value="20"></div>
+    <div><label>Bike <span class="unit">₹</span></label><input type="number" id="bike" value="100"></div>
+    <div><label>Misc <span class="unit">₹</span></label><input type="number" id="misc" value="0"></div>
+  </div>
+  <h3>Margin</h3>
+  <div class="inp">
+    <div><label>Margin per rental day</label><div class="derived" id="mOut"></div></div>
+    <div><label>Margin on an extra day a kept rider brings</label><div class="derived" id="mxOut"></div></div>
+  </div>
+  <label class="ck"><input type="checkbox" id="bikePaid">Bike cost is already paid on the extra days a kept rider brings</label>
+</section>
+
+<section>
+  <h2>After the retention data ends</h2>
+  <div class="inp">
+    <div><label>Riders who leave each week <span class="unit">%</span></label><input type="number" id="tail" value="6.8"></div>
+  </div>
+  <p class="note" id="tailNote"></p>
+</section>
+
+<section>
+  <h2>Benefits</h2>
+  <table id="benT"><thead><tr><th>Benefit</th><th class="r">Cost per use ₹</th><th class="r">Used %</th><th style="padding-left:20px">How the cost is worked out</th></tr></thead><tbody></tbody></table>
+</section>
+
+<section>
+  <h2>Every four weeks</h2>
+  <div class="scroll wk"><table id="wkT"><thead><tr>
+    <th>Week</th><th class="r">Bounce Day</th><th class="r">Amount given back by then</th><th class="r">Margin given back by then</th><th class="r">Rider retention today</th><th class="r">Retention for break-even</th><th class="r">Increase needed</th>
+  </tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <h2>Milestones</h2>
+  <div class="scroll"><table id="msT"><thead></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <h2>Break-even at each milestone</h2>
+  <div class="scroll"><table id="resT"><thead><tr>
+    <th>Bounce Day</th><th class="r">Riders reaching</th><th class="r">Total cost</th><th class="r">Extra days needed per rider</th><th class="r">Retention increase needed</th>
+  </tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <h2>Rider retention</h2>
+  <table id="retT" style="max-width:720px"><thead><tr><th>Bounce Day</th><th class="r">History %</th><th class="r">Used %</th><th class="r">Riders</th><th class="r">Days left per rider</th></tr></thead><tbody></tbody></table>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <div class="formula">
+    Everything follows 1,000 new riders for 18 months (548 Bounce Days). Retention is <b>rider</b> retention: the share of new riders still renting on each Bounce Day, counting each rider once, not bookings or renewals.<br>
+    Margin per rental day = rent − energy − maintenance − bike − misc. Margin given back is measured against this.<br>
+    Cost per grant = cost per use × used %. Cost per rider at a milestone = sum of (benefits given × cost per grant).<br>
+    W4 retention variable: every daily exit rate is multiplied by the same factor, chosen so the share reaching Day 28 moves by the points entered.<br>
+    Results: the model cuts every exit rate by the same %, until the margin on the extra rental days equals the benefit cost over 18 months. Benefits are costed on the improved retention, so riders the programme keeps also earn benefits.<br>
+    Every four weeks: the same break-even, counting only costs and rental days up to that week. Early weeks carry costs before most of the extra days arrive, so they need more.<br>
+    Break-even at each milestone: extra days needed per rider = that milestone's cost per rider ÷ margin on an extra day. Retention increase needed = riders that milestone must keep (its extra days ÷ the days a kept rider still rents, including after Day 548), as a share of the 1,000. That is how much retention at the next milestone has to rise.
+  </div>
+</section>
+
+<section>
+  <h2>Where the numbers come from</h2>
+  <div class="formula">
+    <b>Rent ₹295.5 a day:</b> actual rent per paid rental day for riders who started on or after 15 Jan 2026 (to 24 Nov 2026), excluding activation packs, fees and deposits. 7-day plans are 64% of rental days at ₹277 a day, 1-day plans 28% at ₹338, 3-day 5% at ₹333. <b>Costs per rental day:</b> owner's figures: energy ₹80 and maintenance ₹20 while the EV is moving, bike ₹100 a day.<br>
+    <b>Rider retention:</b> the share of those 38,269 new riders still renting on each Bounce Day (paid rental days), counting every exit, including riders who later come back. Riders still renting on 24 Nov are counted up to that day only. Measured up to Day 271. After that, retention follows the weekly rate in "After the retention data ends" (6.8% by default, the rate seen over Days 183–267). The model runs to Day 548, which is 18 months. Business rules applied; June 2026 checks for submissions, deployments, same-day swaps and renewals reproduced.<br>
+    <b>Benefit costs and usage:</b> concept doc, with prices from the data. Free day = a day's rent (₹295.5), 90% used. Pay later = 10% of used days unpaid at the 1-day price ₹338 (₹33.8), 30% used. EMI = ₹430 a week lost when a daily rider moves to a 7-day plan (7 × ₹338 − ₹1,938), 17.5% (midpoint of 10–25%). Hold = margin lost on the held day (₹46, still the old estimate), half of hold days used. Goodies at cost, all claimed.<br>
+    <b>Milestones:</b> Days 2–349 are the schedule in the concept doc. Days 391–517 are an assumption: every 6 weeks, hold + pay later + EMI, with a free day at every other milestone, no goodies.<br>
+  </div>
+</section>
+</div>
+<script>
+const BEN = [
+  {k:'unlock', n:'2 hrs EV unlock', c:0,   u:100, w:'No cost: the EV is only unlocked so the rider can return it.'},
+  {k:'hold',   n:'Hold EV',         c:46,  u:50, w:'Margin lost on the held day if another rider could have taken the EV (old 15% estimate).'},
+  {k:'pl',     n:'Pay later',       c:33.8,u:30, w:'10% of pay-later days never paid, at the 1-day price ₹338.'},
+  {k:'free',   n:'Free day',        c:295.5,u:90, w:'A day\'s rent given free (₹295.5).'},
+  {k:'emi',    n:'EMI week',        c:430, u:17.5, w:'Rent lost when a daily rider moves to a 7-day plan: 7 × ₹338 − ₹1,938.'},
+  {k:'holder', n:'Mobile holder',   c:150, u:100, w:'Purchase cost of the holder.'},
+  {k:'rain',   n:'Raincoat',        c:300, u:100, w:'Purchase cost of the raincoat.'},
+  {k:'helmet', n:'Rider helmet',    c:400, u:100, w:'Purchase cost of the helmet.'},
+  {k:'gold',   n:'Gold coins',      c:200, u:100, w:'Value of the gold credited to the rider.'},
+];
+const RET = [[1,100],[2,98.2],[6,93.4],[13,74.2],[20,62.3],[27,53.8],[28,53.1],[41,41.5],[55,32.3],[97,16.6],[139,9.5],[181,5.8],[223,3.7],[265,2.5],[271,2.3]];
+const EXT = [307,349,365,391,433,475,517,548];   // beyond the data: follow the weekly exit rate
+const MS = {2:{unlock:1},6:{hold:1},13:{hold:1,pl:1},20:{hold:1},27:{hold:1,pl:1,free:1},41:{hold:1},
+  55:{hold:1,pl:1,holder:1,emi:1},97:{hold:1,pl:1,free:1,emi:1},139:{hold:1,pl:1,free:1,emi:1,rain:1},181:{hold:1,pl:1,free:1,emi:1},
+  223:{hold:1,pl:1,emi:1,helmet:1},265:{hold:1,pl:1,free:1,emi:1},307:{hold:1,pl:1,emi:1,gold:1},349:{hold:1,pl:1,free:1,emi:1},
+  391:{hold:1,pl:1,emi:1},433:{hold:1,pl:1,free:1,emi:1},475:{hold:1,pl:1,emi:1},517:{hold:1,pl:1,free:1,emi:1}};
+const MDAYS = Object.keys(MS).map(Number);
+const H = 548, W4 = 28, N = 1000;
+const $ = id => document.getElementById(id);
+const rs = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const num = n => Math.round(n).toLocaleString('en-IN');
+const pct = (n,d=1) => (n*100).toFixed(d) + '%';
+const pp = n => (n>=0?'+':'') + (n*100).toFixed(1) + ' pts';
+
+function build(){
+  $('benT').querySelector('tbody').innerHTML = BEN.map((b,i)=>`<tr><td>${b.n}</td>
+    <td class="r"><input type="number" data-b="${i}" data-f="c" value="${b.c}"></td>
+    <td class="r"><input type="number" class="sm" data-b="${i}" data-f="u" value="${b.u}"></td><td class="how">${b.w}</td></tr>`).join('');
+  $('retT').querySelector('tbody').innerHTML = RET.map((r,i)=>`<tr><td>Day ${r[0]}</td>
+    <td class="r">${i===0?'100':`<input type="number" class="sm" data-r="${i}" value="${r[1]}">`}</td>
+    <td class="r" id="ru${i}"></td><td class="r" id="rn${i}"></td><td class="r" id="rd${i}"></td></tr>`).join('') +
+    EXT.map(d=>`<tr><td>Day ${d}</td><td class="r neg" id="xh${d}"></td><td class="r" id="xu${d}"></td><td class="r" id="xn${d}"></td><td class="r" id="xd${d}"></td></tr>`).join('');
+  $('msT').querySelector('thead').innerHTML = `<tr><th>Bounce Day</th>${BEN.map(b=>`<th class="r">${b.n}</th>`).join('')}<th class="r">Cost per rider ₹</th></tr>`;
+  $('msT').querySelector('tbody').innerHTML = MDAYS.map(d=>`<tr><td>Day ${d}</td>${BEN.map(b=>`<td class="r"><input type="number" class="sm" data-m="${d}" data-k="${b.k}" value="${MS[d][b.k]||0}"></td>`).join('')}<td class="r" id="mc${d}"></td></tr>`).join('') +
+    `<tr class="tot"><td>In 18 months</td>${BEN.map(b=>`<td class="r" id="yr_${b.k}"></td>`).join('')}<td class="r" id="mcTot"></td></tr>`;
+}
+
+// history curve: share of new riders reaching Bounce Day d (exponential decay between the points given)
+function survH(d){
+  if(d<=RET[0][0]) return RET[0][1]/100;
+  const L = RET[RET.length-1];
+  if(d>L[0]) return L[1]/100*Math.pow(1-tailDay(), d-L[0]);
+  for(let i=1;i<RET.length;i++) if(d<=RET[i][0]){ const [d0,s0]=RET[i-1],[d1,s1]=RET[i];
+    return Math.exp(Math.log(s0)+(Math.log(s1)-Math.log(s0))*(d-d0)/(d1-d0))/100; }
+  return RET[RET.length-1][1]/100;
+}
+let HZ = [];   // daily exit rate: share of riders on day d who leave after it
+function hazards(){ HZ = [0]; for(let d=1; d<H; d++){ const a=survH(d), b=survH(d+1); HZ[d] = a>0 ? 1-b/a : 0; } }
+function curve(k){ const S=[0,1]; for(let d=1; d<H; d++) S[d+1] = S[d]*(1-Math.min(1,k*HZ[d])); return S; }
+const tailDay = () => { const w=+$('tail').value/100; return 1-Math.pow(1-w,1/7); };
+const daysIn = (S,from=1,to=H) => { let t=0; for(let x=Math.max(from,1); x<=to; x++) t+=S[x]; return t; };
+const daysLeft = (S,d) => { const hd=tailDay(); return S[d]>0 ? (daysIn(S,d) + (hd>0 ? S[H]*(1-hd)/hd : 0))/S[d] : 0; };
+function solve(f, lo, hi){ for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(f(m)) hi=m; else lo=m; } return (lo+hi)/2; }
+
+function calc(){
+  hazards();
+  const rent=+$('rent').value, org=+$('org').value/100, misc=+$('misc').value;
+  const run = +$('energy').value + +$('maint').value;
+  const perDay = rent - run - +$('bike').value - misc;
+  const perDayX = $('bikePaid').checked ? rent - run - misc : perDay;
+  $('mOut').innerHTML = `${rs(perDay)}<small>${pct(perDay/rent)} of rent</small>`;
+  $('mxOut').innerHTML = `${rs(perDayX)}<small>${pct(perDayX/rent)} of rent</small>`;
+  const grant = BEN.map(b=>b.c*b.u/100);
+  const perM = {}; MDAYS.forEach(d=>{ perM[d] = BEN.reduce((a,b,i)=>a+(MS[d][b.k]||0)*grant[i],0); });
+  const costOn = (S,to=H) => MDAYS.reduce((a,d)=>a+(d<=to ? N*S[d]*perM[d] : 0),0);
+
+  // W4 retention variable
+  const S0 = curve(1), w4h = S0[W4], target = Math.min(0.999, Math.max(0.001, w4h+org));
+  const k0 = org===0 ? 1 : solve(k => curve(k)[W4] <= target, 0, 5);
+  const B = curve(k0);
+  $('orgNote').textContent = org===0 ? `W4 rider retention ${pct(w4h)} (history)` : `W4 rider retention ${pct(w4h)} → ${pct(B[W4])}`;
+
+  RET.forEach((r,i)=>{ const s=B[r[0]]; $('ru'+i).textContent=(s*100).toFixed(1); $('rn'+i).textContent=num(N*s); $('rd'+i).textContent=Math.round(daysLeft(B,r[0])); });
+  EXT.forEach(d=>{ const s=B[d]; $('xh'+d).textContent=(survH(d)*100).toFixed(2); $('xu'+d).textContent=(s*100).toFixed(2); $('xn'+d).textContent=num(N*s); $('xd'+d).textContent=Math.round(daysLeft(B,d)); });
+  const lastDay = RET[RET.length-1][0];
+  $('tailNote').textContent = `Retention data covers only the first ${lastDay} Bounce Days. After Day ${lastDay}, the model assumes the same share of the remaining riders leaves every week, both up to Day ${H} and after it.`;
+
+  // break-even up to day T: cut every exit rate by y until extra margin to T = benefit cost to T
+  function breakEven(T){
+    const base = N*daysIn(B,1,T);
+    const gain = y => { const P = curve(k0*(1-y)); return (N*daysIn(P,1,T)-base)*perDayX - costOn(P,T); };
+    if(perDayX<=0 || gain(0.999) < 0) return null;
+    const y = solve(v => gain(v) >= 0, 0, 0.999);
+    return {y, P:curve(k0*(1-y))};
+  }
+
+  // milestones
+  let totCost=0; const yr={};
+  MDAYS.forEach(d=>{ BEN.forEach(b=>yr[b.k]=(yr[b.k]||0)+(MS[d][b.k]||0)); $('mc'+d).textContent = rs(perM[d]); });
+  BEN.forEach(b=>$('yr_'+b.k).textContent=yr[b.k]);
+
+  // break-even at each milestone
+  const rows = MDAYS.map(d=>{
+    const reach = N*B[d], cost = reach*perM[d]; totCost += cost;
+    const perRider = perDayX>0 ? perM[d]/perDayX : 0;
+    const left = daysLeft(B,d);
+    const keep = (left>0 && perDayX>0) ? cost/perDayX/left : 0;
+    return `<tr><td>Day ${d}</td><td class="r">${num(reach)}</td><td class="r">${rs(cost)}</td><td class="r">${perRider.toFixed(1)}</td><td class="r">${pp(keep/N)}</td></tr>`;
+  });
+  $('mcTot').textContent = rs(totCost/N) + ' per new rider';
+  $('resT').querySelector('tbody').innerHTML = rows.join('') + `<tr class="tot"><td>Total</td><td></td><td class="r">${rs(totCost)}</td><td></td><td></td></tr>`;
+
+  // every four weeks
+  const wk = [];
+  for(let w=4; w*7<=H+6; w+=4){
+    const T = Math.min(w*7, H);
+    const amt = costOn(B,T), give = amt/(N*daysIn(B,1,T)*perDay);
+    const be = breakEven(T);
+    wk.push(`<tr><td>Week ${w}</td><td class="r">${T}</td><td class="r">${rs(amt)}</td><td class="r">${pct(give)}</td><td class="r">${pct(B[T])}</td>
+      <td class="r">${be?pct(be.P[T]):'<span class="neg">Not possible</span>'}</td><td class="r">${be?pp(be.P[T]-B[T]):''}</td></tr>`);
+  }
+  $('wkT').querySelector('tbody').innerHTML = wk.join('');
+
+  // results (18 months)
+  const baseDays = N*daysIn(B), baseMargin = baseDays*perDay;
+  const be = breakEven(H);
+  const extraDays = be ? N*daysIn(be.P)-baseDays : NaN;
+  $('tiles').innerHTML = [
+    ['Benefit cost per new rider', rs(totCost/N), `${rs(totCost)} for ${num(N)} new riders`],
+    ['Margin given back', pct(totCost/baseMargin), `${pct(totCost/(baseDays*rent))} of revenue`],
+    ['W4 rider retention for break-even', be?pct(be.P[W4]):'Not possible', be?`from ${pct(B[W4])} (${pp(be.P[W4]-B[W4])}); every exit rate falls ${pct(be.y,0)}`:'benefits cost more than any retention gain can earn'],
+    ['Rental days must grow by', be?pct(extraDays/baseDays,0):'–', be?`${num(extraDays)} extra days on ${num(baseDays)}`:''],
+  ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+}
+
+document.addEventListener('input', e=>{
+  const t=e.target;
+  if(t.dataset.b!==undefined) BEN[+t.dataset.b][t.dataset.f] = +t.value;
+  if(t.dataset.r!==undefined) RET[+t.dataset.r][1] = +t.value;
+  if(t.dataset.m!==undefined) MS[+t.dataset.m][t.dataset.k] = +t.value;
+  calc();
+});
+build(); calc();
+</script>
+</body>
+</html>
