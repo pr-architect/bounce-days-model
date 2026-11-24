@@ -80,18 +80,17 @@
   .sets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .sets button{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--b);cursor:pointer}
   .sets button.on{background:var(--red);border-color:var(--red);color:#fff}
-  .think{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-  .tk{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FCFBFA}
-  .tk b{display:block;font-size:14px}
-  .tk span{display:block;font-size:13px;font-weight:600;margin-top:4px}
-  .tk p{font-size:12.5px;color:var(--b);margin-top:6px;line-height:1.5}
-  .tk.resc{background:var(--ink-t);border-color:var(--ink-l)} .tk.resc span{color:var(--ink)}
-  .tk.rew{background:var(--green-t);border-color:var(--green-l)} .tk.rew span{color:var(--green)}
   .ty{font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:#EEE}
   .ty.rescue{background:var(--ink-t);color:var(--ink)} .ty.reward{background:var(--green-t);color:var(--green)} .ty.tool{background:#F1F1F1;color:var(--b)}
-  #msT td.how{min-width:320px;line-height:1.35}
-  #msT input.sm{width:46px}
-  #msT th{white-space:normal;vertical-align:bottom}
+  .pts{margin:16px 0 4px 20px;display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.45;color:var(--b)}
+  .pts li::marker{color:var(--red);font-weight:700}
+  .pts b{color:var(--h)}
+  .scroll.msw{max-height:460px;overflow:auto;margin-top:14px;border:1px solid var(--line);border-radius:10px}
+  .scroll.msw table{margin-top:0}
+  .scroll.msw th{position:sticky;top:0;z-index:1}
+  #msT th,#msT td{padding-left:14px;padding-right:14px}
+  #msT td.how{min-width:420px;white-space:normal}
+  #msT th:first-child,#msT td:first-child{white-space:nowrap}
   td.how{color:var(--b);font-size:13px;padding-left:20px}
   .formula{font-size:12.5px;color:var(--b);line-height:1.7;margin-top:8px}
   .formula b{color:var(--h)}
@@ -162,13 +161,13 @@
 <section id="s-ms" class="sec r">
   <h2><i></i>Milestones</h2>
   <div class="sets" id="setBtns"></div>
-  <div class="think" id="msThink">
-    <div class="tk resc"><b>Rescue benefits, the day before a renewal</b><span>Pay later, Hold EV, EMI week.</span><p>They save a renewal that is about to be lost: a rider short of cash on renewal day needs pay later in hand then, not the day after. Placed on Day 6, 13, 20… so they are ready on the 7-day renewal day.</p></div>
-    <div class="tk rew"><b>Reward benefits, just after a renewal</b><span>Free day, mobile holder, raincoat, rider helmet, gold coins.</span><p>Shown as "renew to unlock": a reward one day away that needs a renewal. Only riders who renewed get them, so riders who leave anyway cost nothing.</p></div>
-    <div class="tk"><b>One benefit per milestone, no bundles</b><p>There is always a next benefit to look forward to, and each one gets its own moment.</p></div>
-    <div class="tk"><b>Spacing follows the data</b><p>Weekly to Day 92, while 19% → 10% of riders leave each week. Every two weeks to Day 183, as weekly exits ease to about 7%. Every four weeks after that, when they are 4–6%. Exits spike on 7-day renewal days: Day 7 12.6%, Day 14 8.2%, Day 21 5.7%, Day 28 5.3%, against about 1.5% on other days.</p></div>
-  </div>
-  <div class="scroll"><table id="msT"><thead></thead><tbody></tbody></table></div>
+  <ol class="pts" id="msThink">
+    <li><b>Rescue benefits:</b> given before renewals. Pay later, Hold EV, EMI week.</li>
+    <li><b>Reward benefits:</b> given after renewals. Free day, goodies, gold coins.</li>
+    <li><b>One benefit per milestone, no bundles.</b> Less wait time for the next benefit.</li>
+    <li><b>Spacing follows the data:</b> weekly to Day 92, while 10–19% of riders leave each week; every two weeks to Day 183; every four weeks after. The Day 7 renewal loses the most riders (12.6%).</li>
+  </ol>
+  <div class="scroll msw"><table id="msT"><thead></thead><tbody></tbody></table></div>
 </section>
 
 <section id="s-be" class="sec g">
@@ -245,9 +244,9 @@ function buildMs(){
   const meta = SETS[CUR].meta, hasMeta = Object.keys(meta).length>0;
   $('setBtns').innerHTML = Object.entries(SETS).map(([k,s])=>`<button class="${k===CUR?'on':''}" data-set="${k}">${s.name}</button>`).join('');
   $('msThink').style.display = CUR==='rr' ? '' : 'none';
-  $('msT').querySelector('thead').innerHTML = `<tr><th>Bounce Day</th>${hasMeta?'<th>Type</th>':''}${BEN.map(b=>`<th class="r">${b.n}</th>`).join('')}<th class="r">Cost per rider ₹</th>${hasMeta?'<th style="padding-left:18px">Why this day</th>':''}</tr>`;
-  $('msT').querySelector('tbody').innerHTML = MDAYS.map(d=>`<tr><td>Day ${d}</td>${hasMeta?`<td><span class="ty ${(meta[d]||[''])[0].toLowerCase()}">${(meta[d]||[''])[0]}</span></td>`:''}${BEN.map(b=>`<td class="r"><input type="number" class="sm" data-m="${d}" data-k="${b.k}" value="${MS[d][b.k]||0}"></td>`).join('')}<td class="r" id="mc${d}"></td>${hasMeta?`<td class="how">${(meta[d]||['',''])[1]}</td>`:''}</tr>`).join('') +
-    `<tr class="tot"><td>In 18 months</td>${hasMeta?'<td></td>':''}${BEN.map(b=>`<td class="r" id="yr_${b.k}"></td>`).join('')}<td class="r" id="mcTot"></td>${hasMeta?'<td></td>':''}</tr>`;
+  $('msT').querySelector('thead').innerHTML = `<tr><th>Bounce Day</th>${BEN.map(b=>`<th class="r">${b.n}</th>`).join('')}<th class="r">Cost per rider ₹</th>${hasMeta?'<th style="padding-left:22px">Type</th><th>Why this day</th>':''}</tr>`;
+  $('msT').querySelector('tbody').innerHTML = MDAYS.map(d=>`<tr><td>Day ${d}</td>${BEN.map(b=>`<td class="r"><input type="number" class="sm" data-m="${d}" data-k="${b.k}" value="${MS[d][b.k]||0}"></td>`).join('')}<td class="r" id="mc${d}"></td>${hasMeta?`<td style="padding-left:22px"><span class="ty ${(meta[d]||[''])[0].toLowerCase()}">${(meta[d]||[''])[0]}</span></td><td class="how">${(meta[d]||['',''])[1]}</td>`:''}</tr>`).join('') +
+    `<tr class="tot"><td>In 18 months</td>${BEN.map(b=>`<td class="r" id="yr_${b.k}"></td>`).join('')}<td class="r" id="mcTot"></td>${hasMeta?'<td></td><td></td>':''}</tr>`;
 }
 
 // history curve: share of new riders reaching Bounce Day d (exponential decay between the points given)
