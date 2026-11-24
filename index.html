@@ -6,73 +6,105 @@
 <title>Bounce Days: cost and break-even model</title>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--red:#D42B30;--h:#2B2B2B;--b:#5E5E5E;--s:#8A8A8A;--line:#E6E3DF;--bg:#F4F3F1;--green:#178040;--amber:#9A5B00;--amber-bg:#FFF3DC}
+  :root{--red:#D42B30;--red-t:#FDF0F0;--red-l:#F6D2D3;--h:#262626;--b:#5E5E5E;--s:#8A8A8A;--line:#ECE9E5;--bg:#F6F5F3;
+        --green:#178040;--green-t:#EEF7F1;--green-l:#CFE8D8;--ink:#1F2A44;--ink-t:#F1F3F8;--ink-l:#D9DEEA;--amber:#8A5300;--amber-t:#FFF6E5}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:"Hanken Grotesk",system-ui,sans-serif;background:var(--bg);color:var(--h);line-height:1.3;font-size:14px;padding:28px 32px 60px}
-  .wrap{max-width:1180px;margin:0 auto}
-  h1{font-size:24px;font-weight:700}
-  .top{display:flex;align-items:center;justify-content:space-between;gap:16px}
-  .reset{font:inherit;font-size:14px;font-weight:600;color:var(--red);background:#fff;border:1px solid #F0C4C5;border-radius:10px;padding:8px 14px;cursor:pointer}
-  .reset:hover{background:#FDECEC}
-  .dummy{display:inline-block;margin-top:10px;background:var(--amber-bg);color:var(--amber);font-weight:600;font-size:13px;padding:5px 10px;border-radius:8px}
-  section{background:#fff;border-radius:16px;padding:20px 22px;margin-top:18px}
-  h2{font-size:17px;font-weight:700}
-  h3{font-size:13px;font-weight:700;color:var(--b);text-transform:uppercase;letter-spacing:.4px;margin:18px 0 0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Hanken Grotesk",system-ui,sans-serif;background:var(--bg);color:var(--h);line-height:1.3;font-size:14px}
+  .side{position:fixed;left:0;top:0;bottom:0;width:236px;background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:18px;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 6px}
+  .logo{width:36px;height:36px;border-radius:11px;background:var(--red);color:#fff;font-weight:800;font-size:18px;display:grid;place-items:center}
+  .brand b{display:block;font-size:15px}.brand small{display:block;font-size:12px;color:var(--s);margin-top:2px}
+  #nav{display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+  #nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:var(--b);text-decoration:none;font-size:13.5px;font-weight:500;border-left:3px solid transparent}
+  #nav a:hover{background:var(--bg);color:var(--h)}
+  #nav a.on{background:var(--red-t);color:var(--red);font-weight:600;border-left-color:var(--red)}
+  #nav a i{width:8px;height:8px;border-radius:3px;flex:none}
+  i.r{background:var(--red)} i.g{background:var(--green)} i.n{background:#9AA3B5}
+  .side .reset{margin-top:auto;font:inherit;font-size:13.5px;font-weight:600;color:var(--red);background:#fff;border:1px solid var(--red-l);border-radius:10px;padding:9px 12px;cursor:pointer}
+  .side .reset:hover{background:var(--red-t)}
+  .wrap{margin-left:236px;padding:26px 36px 70px;max-width:1260px}
+  .hero{background:linear-gradient(120deg,#fff 0%,#fff 55%,var(--red-t) 100%);border:1px solid var(--line);border-radius:18px;padding:22px 24px;position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,43,48,.10),rgba(212,43,48,0) 70%)}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--red)}
+  h1{font-size:26px;font-weight:700;margin-top:6px}
+  .dummy{display:inline-block;margin-top:12px;background:var(--amber-t);color:var(--amber);font-weight:600;font-size:12.5px;padding:5px 10px;border-radius:8px}
+  section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:16px;scroll-margin-top:16px}
+  h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+  h2 i{width:10px;height:10px;border-radius:3px;flex:none}
+  .sec.r h2 i{background:var(--red)} .sec.g h2 i{background:var(--green)} .sec.n h2 i{background:#9AA3B5}
+  h3{font-size:12px;font-weight:700;color:var(--b);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 0;display:inline-block;background:var(--ink-t);padding:3px 8px;border-radius:6px}
+  #s-rv{background:linear-gradient(90deg,var(--green-t),#fff 60%);border-color:var(--green-l)}
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
-  .tile{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-  .tile .k{font-size:12.5px;color:var(--s)}
-  .tile .v{font-size:24px;font-weight:700;margin-top:6px}
-  .tile .d{font-size:12.5px;color:var(--b);margin-top:4px}
+  .tile{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;position:relative;overflow:hidden}
+  .tile:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#9AA3B5}
+  .tile:nth-child(1){background:var(--red-t);border-color:var(--red-l)} .tile:nth-child(1):before{background:var(--red)}
+  .tile:nth-child(2):before{background:var(--red)}
+  .tile:nth-child(3){background:var(--green-t);border-color:var(--green-l)} .tile:nth-child(3):before{background:var(--green)}
+  .tile:nth-child(4):before{background:var(--green)}
+  .tile .k{font-size:12.5px;color:var(--b);font-weight:500}
+  .tile .v{font-size:28px;font-weight:700;margin-top:6px;letter-spacing:-.5px}
+  .tile:nth-child(1) .v{color:var(--red)} .tile:nth-child(3) .v{color:var(--green)}
+  .tile .d{font-size:12.5px;color:var(--b);margin-top:5px;line-height:1.4}
   table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
-  th{text-align:left;font-weight:600;color:var(--s);font-size:12.5px;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-  td{padding:6px 8px;border-bottom:1px solid #F0EEEB;vertical-align:middle}
+  th{text-align:left;font-weight:600;color:var(--b);font-size:12px;padding:8px 8px;background:#FAF9F7;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child{border-top-left-radius:8px} th:last-child{border-top-right-radius:8px}
+  td{padding:6px 8px;border-bottom:1px solid #F2F0ED;vertical-align:middle}
+  tbody tr:hover td{background:#FCFBFA}
   th.r,td.r{text-align:right}
-  tr.tot td{font-weight:700;border-top:1px solid var(--line);border-bottom:0}
+  tr.tot td{font-weight:700;border-top:1px solid var(--line);border-bottom:0;background:#FAF9F7}
   input[type=number]{width:84px;font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid #DCD8D3;border-radius:7px;background:#FBFAF9;text-align:right;color:var(--h)}
-  input[type=number]:focus{outline:none;border-color:var(--red);background:#fff}
+  input[type=number]:focus{outline:none;border-color:var(--red);background:#fff;box-shadow:0 0 0 3px var(--red-t)}
   input.sm{width:64px}
   .inp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 18px;margin-top:10px}
   .inp label{display:block;font-size:12.5px;color:var(--b);margin-bottom:5px}
   .inp input[type=number]{width:100%}
   .unit{color:var(--s);font-size:12px;margin-left:4px}
-  .derived{font-size:22px;font-weight:700;padding-top:2px}
+  .derived{font-size:22px;font-weight:700;padding:6px 10px;background:var(--green-t);border:1px solid var(--green-l);border-radius:9px;color:var(--green);display:inline-block}
   .derived small{font-size:12.5px;font-weight:500;color:var(--b);margin-left:6px}
-  .ck{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;margin-top:12px}
+  .ck{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;margin-top:14px}
   .ck input{accent-color:var(--red)}
   .scroll{overflow-x:auto}
-  .scroll.wk{max-height:217px;overflow-y:auto;margin-top:12px}
+  .scroll.wk{max-height:226px;overflow-y:auto;margin-top:12px}
   .scroll.wk table{margin-top:0}
-  .scroll.wk th{position:sticky;top:0;background:#fff;z-index:1}
+  .scroll.wk th{position:sticky;top:0;z-index:1}
   .note{font-size:12.5px;color:var(--b);margin-top:12px;line-height:1.5}
   .note b{color:var(--h)}
   .rv{display:flex;align-items:center;gap:14px;margin-top:12px}
   .rv label{font-size:14px;font-weight:600}
   .rv input{width:100px}
-  .rv span{font-size:13px;color:var(--b)}
+  .rv span{font-size:13px;color:var(--green);font-weight:600;background:#fff;border:1px solid var(--green-l);padding:4px 9px;border-radius:999px}
   .neg{color:var(--s)}
   td.how{color:var(--b);font-size:13px;padding-left:20px}
   .formula{font-size:12.5px;color:var(--b);line-height:1.7;margin-top:8px}
   .formula b{color:var(--h)}
+  @media (max-width:900px){ .side{display:none} .wrap{margin-left:0;padding:18px} .tiles,.inp{grid-template-columns:1fr 1fr} }
 </style>
 </head>
-<body><div class="wrap">
+<body>
+<aside class="side">
+  <div class="brand"><span class="logo">B</span><div><b>Bounce Days</b><small>Break-even model</small></div></div>
+  <nav id="nav"><a href="#s-rv" data-s="s-rv"><i class="g"></i>Retention variable</a><a href="#s-res" data-s="s-res"><i class="r"></i>Results</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-tail" data-s="s-tail"><i class="n"></i>After the data ends</a><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Every four weeks</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
+  <button class="reset" onclick="location.reload()">↺ Reset all values</button>
+</aside>
+<div class="wrap">
 
-<div class="top"><h1>Bounce Days: cost and break-even model</h1><button class="reset" onclick="location.reload()">Reset all values</button></div>
-<span class="dummy">Retention and rent from data: riders whose first rental was on or after 15 Jan 2026, data to 24 Nov 2026. See "Where the numbers come from".</span>
+<header class="hero"><span class="eyebrow">Retention programme</span><h1>Bounce Days: cost and break-even model</h1>
+<span class="dummy">Retention and rent from data: riders whose first rental was on or after 15 Jan 2026, data to 24 Nov 2026. See Sources.</span></header>
 
-<section>
-  <h2>Retention Variable</h2>
+<section id="s-rv" class="sec g">
+  <h2><i></i>Retention Variable</h2>
   <div class="rv"><label for="org">W4 retention variable</label><input type="number" id="org" value="0" step="0.5"><span id="orgNote"></span></div>
   <p class="note">Use this to move the starting point away from history. <b>Positive</b> = retention will be better anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = retention gets worse anyway. The change is spread across every week the same way, so the shape of the curve stays as in history.</p>
 </section>
 
-<section>
-  <h2>Results</h2>
+<section id="s-res" class="sec r">
+  <h2><i></i>Results</h2>
   <div class="tiles" id="tiles"></div>
 </section>
 
-<section>
-  <h2>Inputs</h2>
+<section id="s-inp" class="sec n">
+  <h2><i></i>Inputs</h2>
   <h3>Revenue</h3>
   <div class="inp">
     <div><label>Average rental per day <span class="unit">₹</span></label><input type="number" id="rent" value="295.5"></div>
@@ -92,45 +124,45 @@
   <label class="ck"><input type="checkbox" id="bikePaid">Bike cost is already paid on the extra days a kept rider brings</label>
 </section>
 
-<section>
-  <h2>After the retention data ends</h2>
+<section id="s-tail" class="sec n">
+  <h2><i></i>After the retention data ends</h2>
   <div class="inp">
     <div><label>Riders who leave each week <span class="unit">%</span></label><input type="number" id="tail" value="6.8"></div>
   </div>
   <p class="note" id="tailNote"></p>
 </section>
 
-<section>
-  <h2>Benefits</h2>
+<section id="s-ben" class="sec r">
+  <h2><i></i>Benefits</h2>
   <table id="benT"><thead><tr><th>Benefit</th><th class="r">Cost per use ₹</th><th class="r">Used %</th><th style="padding-left:20px">How the cost is worked out</th></tr></thead><tbody></tbody></table>
 </section>
 
-<section>
-  <h2>Every four weeks</h2>
+<section id="s-wk" class="sec g">
+  <h2><i></i>Every four weeks</h2>
   <div class="scroll wk"><table id="wkT"><thead><tr>
     <th>Week</th><th class="r">Bounce Day</th><th class="r">Amount given back by then</th><th class="r">Margin given back by then</th><th class="r">Rider retention today</th><th class="r">Retention for break-even</th><th class="r">Increase needed</th>
   </tr></thead><tbody></tbody></table></div>
 </section>
 
-<section>
-  <h2>Milestones</h2>
+<section id="s-ms" class="sec r">
+  <h2><i></i>Milestones</h2>
   <div class="scroll"><table id="msT"><thead></thead><tbody></tbody></table></div>
 </section>
 
-<section>
-  <h2>Break-even at each milestone</h2>
+<section id="s-be" class="sec g">
+  <h2><i></i>Break-even at each milestone</h2>
   <div class="scroll"><table id="resT"><thead><tr>
     <th>Bounce Day</th><th class="r">Riders reaching</th><th class="r">Total cost</th><th class="r">Extra days needed per rider</th><th class="r">Retention increase needed</th>
   </tr></thead><tbody></tbody></table></div>
 </section>
 
-<section>
-  <h2>Rider retention</h2>
+<section id="s-ret" class="sec g">
+  <h2><i></i>Rider retention</h2>
   <table id="retT" style="max-width:720px"><thead><tr><th>Bounce Day</th><th class="r">History %</th><th class="r">Used %</th><th class="r">Riders</th><th class="r">Days left per rider</th></tr></thead><tbody></tbody></table>
 </section>
 
-<section>
-  <h2>How it works</h2>
+<section id="s-how" class="sec n">
+  <h2><i></i>How it works</h2>
   <div class="formula">
     Everything follows 1,000 new riders for 18 months (548 Bounce Days). Retention is <b>rider</b> retention: the share of new riders still renting on each Bounce Day, counting each rider once, not bookings or renewals.<br>
     Margin per rental day = rent − energy − maintenance − bike − misc. Margin given back is measured against this.<br>
@@ -142,8 +174,8 @@
   </div>
 </section>
 
-<section>
-  <h2>Where the numbers come from</h2>
+<section id="s-src" class="sec n">
+  <h2><i></i>Where the numbers come from</h2>
   <div class="formula">
     <b>Rent ₹295.5 a day:</b> actual rent per paid rental day for riders who started on or after 15 Jan 2026 (to 24 Nov 2026), excluding activation packs, fees and deposits. 7-day plans are 64% of rental days at ₹277 a day, 1-day plans 28% at ₹338, 3-day 5% at ₹333. <b>Costs per rental day:</b> owner's figures: energy ₹80 and maintenance ₹20 while the EV is moving, bike ₹100 a day.<br>
     <b>Rider retention:</b> the share of those 38,269 new riders still renting on each Bounce Day (paid rental days), counting every exit, including riders who later come back. Riders still renting on 24 Nov are counted up to that day only. Measured up to Day 271. After that, retention follows the weekly rate in "After the retention data ends" (6.8% by default, the rate seen over Days 183–267). The model runs to Day 548, which is 18 months. Business rules applied; June 2026 checks for submissions, deployments, same-day swaps and renewals reproduced.<br>
@@ -287,6 +319,9 @@ document.addEventListener('input', e=>{
   calc();
 });
 build(); calc();
+const navLinks=[...document.querySelectorAll('#nav a')];
+const spy=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){navLinks.forEach(a=>a.classList.toggle('on',a.dataset.s===e.target.id));}})},{rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('section.sec').forEach(s=>spy.observe(s));
 </script>
 </body>
 </html>
