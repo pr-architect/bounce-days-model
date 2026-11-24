@@ -16,6 +16,9 @@
   .logo{width:36px;height:36px;border-radius:11px;background:var(--red);color:#fff;font-weight:800;font-size:18px;display:grid;place-items:center}
   .brand b{display:block;font-size:15px}.brand small{display:block;font-size:12px;color:var(--s);margin-top:2px}
   #nav{display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+  #nav .grp{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--s);padding:14px 10px 6px}
+  #nav .grp:first-child{padding-top:4px}
+  h2 .sub{font-size:13px;font-weight:500;color:var(--s)}
   #nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:var(--b);text-decoration:none;font-size:13.5px;font-weight:500;border-left:3px solid transparent}
   #nav a:hover{background:var(--bg);color:var(--h)}
   #nav a.on{background:var(--red-t);color:var(--red);font-weight:600;border-left-color:var(--red)}
@@ -34,7 +37,6 @@
   h2 i{width:10px;height:10px;border-radius:3px;flex:none}
   .sec.r h2 i{background:var(--red)} .sec.g h2 i{background:var(--green)} .sec.n h2 i{background:#9AA3B5}
   h3{font-size:12px;font-weight:700;color:var(--b);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 0;display:inline-block;background:var(--ink-t);padding:3px 8px;border-radius:6px}
-  #s-rv{background:linear-gradient(90deg,var(--green-t),#fff 60%);border-color:var(--green-l)}
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
   .tile{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;position:relative;overflow:hidden}
   .tile:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#9AA3B5}
@@ -65,7 +67,7 @@
   .ck{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;margin-top:14px}
   .ck input{accent-color:var(--red)}
   .scroll{overflow-x:auto}
-  .scroll.wk{max-height:226px;overflow-y:auto;margin-top:12px}
+  .scroll.wk{max-height:216px;overflow-y:auto;margin-top:12px}
   .scroll.wk table{margin-top:0}
   .scroll.wk th{position:sticky;top:0;z-index:1}
   .note{font-size:12.5px;color:var(--b);margin-top:12px;line-height:1.5}
@@ -84,7 +86,7 @@
 <body>
 <aside class="side">
   <div class="brand"><span class="logo">B</span><div><b>Bounce Days</b><small>Break-even model</small></div></div>
-  <nav id="nav"><a href="#s-rv" data-s="s-rv"><i class="g"></i>Retention variable</a><a href="#s-res" data-s="s-res"><i class="r"></i>Results</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-tail" data-s="s-tail"><i class="n"></i>After the data ends</a><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Every four weeks</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
+  <nav id="nav"><div class="grp">Math</div><a href="#s-res" data-s="s-res"><i class="r"></i>Output summary</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-cfg" data-s="s-cfg"><i class="g"></i>Additional configs</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Break-even math</a><div class="grp">Benefits cost</div><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits' cost</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><div class="grp">Method</div><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
   <button class="reset" onclick="location.reload()">↺ Reset all values</button>
 </aside>
 <div class="wrap">
@@ -92,14 +94,8 @@
 <header class="hero"><span class="eyebrow">Retention programme</span><h1>Bounce Days: cost and break-even model</h1>
 <span class="dummy">Retention and rent from data: riders whose first rental was on or after 15 Jan 2026, data to 24 Nov 2026. See Sources.</span></header>
 
-<section id="s-rv" class="sec g">
-  <h2><i></i>Retention Variable</h2>
-  <div class="rv"><label for="org">W4 retention variable</label><input type="number" id="org" value="0" step="0.5"><span id="orgNote"></span></div>
-  <p class="note">Use this to move the starting point away from history. <b>Positive</b> = retention will be better anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = retention gets worse anyway. The change is spread across every week the same way, so the shape of the curve stays as in history.</p>
-</section>
-
 <section id="s-res" class="sec r">
-  <h2><i></i>Results</h2>
+  <h2><i></i>Output summary</h2>
   <div class="tiles" id="tiles"></div>
 </section>
 
@@ -124,24 +120,28 @@
   <label class="ck"><input type="checkbox" id="bikePaid">Bike cost is already paid on the extra days a kept rider brings</label>
 </section>
 
-<section id="s-tail" class="sec n">
-  <h2><i></i>After the retention data ends</h2>
+<section id="s-cfg" class="sec g">
+  <h2><i></i>Additional configs</h2>
+  <h3>Retention variable</h3>
+  <div class="rv"><label for="org">W4 retention variable</label><input type="number" id="org" value="0" step="0.5"><span id="orgNote"></span></div>
+  <p class="note">Use this to move the starting point away from history. <b>Positive</b> = retention will be better anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = retention gets worse anyway. The change is spread across every week the same way, so the shape of the curve stays as in history.</p>
+  <h3>After the retention data ends</h3>
   <div class="inp">
     <div><label>Riders who leave each week <span class="unit">%</span></label><input type="number" id="tail" value="6.8"></div>
   </div>
   <p class="note" id="tailNote"></p>
 </section>
 
-<section id="s-ben" class="sec r">
-  <h2><i></i>Benefits</h2>
-  <table id="benT"><thead><tr><th>Benefit</th><th class="r">Cost per use ₹</th><th class="r">Used %</th><th style="padding-left:20px">How the cost is worked out</th></tr></thead><tbody></tbody></table>
-</section>
-
 <section id="s-wk" class="sec g">
-  <h2><i></i>Every four weeks</h2>
+  <h2><i></i>Break-even math <span class="sub">every four weeks</span></h2>
   <div class="scroll wk"><table id="wkT"><thead><tr>
     <th>Week</th><th class="r">Bounce Day</th><th class="r">Amount given back by then</th><th class="r">Margin given back by then</th><th class="r">Rider retention today</th><th class="r">Retention for break-even</th><th class="r">Increase needed</th>
   </tr></thead><tbody></tbody></table></div>
+</section>
+
+<section id="s-ben" class="sec r">
+  <h2><i></i>Benefits' cost</h2>
+  <table id="benT"><thead><tr><th>Benefit</th><th class="r">Cost per use ₹</th><th class="r">Used %</th><th style="padding-left:20px">How the cost is worked out</th></tr></thead><tbody></tbody></table>
 </section>
 
 <section id="s-ms" class="sec r">
