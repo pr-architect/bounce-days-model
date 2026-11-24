@@ -77,6 +77,21 @@
   .rv input{width:100px}
   .rv span{font-size:13px;color:var(--green);font-weight:600;background:#fff;border:1px solid var(--green-l);padding:4px 9px;border-radius:999px}
   .neg{color:var(--s)}
+  .sets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .sets button{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--b);cursor:pointer}
+  .sets button.on{background:var(--red);border-color:var(--red);color:#fff}
+  .think{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .tk{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FCFBFA}
+  .tk b{display:block;font-size:14px}
+  .tk span{display:block;font-size:13px;font-weight:600;margin-top:4px}
+  .tk p{font-size:12.5px;color:var(--b);margin-top:6px;line-height:1.5}
+  .tk.resc{background:var(--ink-t);border-color:var(--ink-l)} .tk.resc span{color:var(--ink)}
+  .tk.rew{background:var(--green-t);border-color:var(--green-l)} .tk.rew span{color:var(--green)}
+  .ty{font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:#EEE}
+  .ty.rescue{background:var(--ink-t);color:var(--ink)} .ty.reward{background:var(--green-t);color:var(--green)} .ty.tool{background:#F1F1F1;color:var(--b)}
+  #msT td.how{min-width:320px;line-height:1.35}
+  #msT input.sm{width:46px}
+  #msT th{white-space:normal;vertical-align:bottom}
   td.how{color:var(--b);font-size:13px;padding-left:20px}
   .formula{font-size:12.5px;color:var(--b);line-height:1.7;margin-top:8px}
   .formula b{color:var(--h)}
@@ -146,6 +161,13 @@
 
 <section id="s-ms" class="sec r">
   <h2><i></i>Milestones</h2>
+  <div class="sets" id="setBtns"></div>
+  <div class="think" id="msThink">
+    <div class="tk resc"><b>Rescue benefits, the day before a renewal</b><span>Pay later, Hold EV, EMI week.</span><p>They save a renewal that is about to be lost: a rider short of cash on renewal day needs pay later in hand then, not the day after. Placed on Day 6, 13, 20… so they are ready on the 7-day renewal day.</p></div>
+    <div class="tk rew"><b>Reward benefits, just after a renewal</b><span>Free day, mobile holder, raincoat, rider helmet, gold coins.</span><p>Shown as "renew to unlock": a reward one day away that needs a renewal. Only riders who renewed get them, so riders who leave anyway cost nothing.</p></div>
+    <div class="tk"><b>One benefit per milestone, no bundles</b><p>There is always a next benefit to look forward to, and each one gets its own moment.</p></div>
+    <div class="tk"><b>Spacing follows the data</b><p>Weekly to Day 92, while 19% → 10% of riders leave each week. Every two weeks to Day 183, as weekly exits ease to about 7%. Every four weeks after that, when they are 4–6%. Exits spike on 7-day renewal days: Day 7 12.6%, Day 14 8.2%, Day 21 5.7%, Day 28 5.3%, against about 1.5% on other days.</p></div>
+  </div>
   <div class="scroll"><table id="msT"><thead></thead><tbody></tbody></table></div>
 </section>
 
@@ -180,7 +202,7 @@
     <b>Rent ₹295.5 a day:</b> actual rent per paid rental day for riders who started on or after 15 Jan 2026 (to 24 Nov 2026), excluding activation packs, fees and deposits. 7-day plans are 64% of rental days at ₹277 a day, 1-day plans 28% at ₹338, 3-day 5% at ₹333. <b>Costs per rental day:</b> owner's figures: energy ₹80 and maintenance ₹20 while the EV is moving, bike ₹100 a day.<br>
     <b>Rider retention:</b> the share of those 38,269 new riders still renting on each Bounce Day (paid rental days), counting every exit, including riders who later come back. Riders still renting on 24 Nov are counted up to that day only. Measured up to Day 271. After that, retention follows the weekly rate in "After the retention data ends" (6.8% by default, the rate seen over Days 183–267). The model runs to Day 548, which is 18 months. Business rules applied; June 2026 checks for submissions, deployments, same-day swaps and renewals reproduced.<br>
     <b>Benefit costs and usage:</b> concept doc, with prices from the data. Free day = a day's rent (₹295.5), 90% used. Pay later = 10% of used days unpaid at the 1-day price ₹338 (₹33.8), 30% used. EMI = ₹430 a week lost when a daily rider moves to a 7-day plan (7 × ₹338 − ₹1,938), 17.5% (midpoint of 10–25%). Hold = margin lost on the held day (₹46, still the old estimate), half of hold days used. Goodies at cost, all claimed.<br>
-    <b>Milestones:</b> Days 2–349 are the schedule in the concept doc. Days 391–517 are an assumption: every 6 weeks, hold + pay later + EMI, with a free day at every other milestone, no goodies.<br>
+    <b>Milestones:</b> three schedules to compare. "Rescue before renewal, reward after" (default): one benefit per milestone, rescue tools the day before a 7-day renewal, rewards the day after, spaced weekly / two-weekly / four-weekly by the exit rates in the data. "Every two weeks": hold and pay later every two weeks from Day 30, EMI every four weeks from Day 45, holder Day 60, raincoat Day 90, helmet Day 180, gold every 3 months from Day 90, free days as in the concept doc. "Concept doc": the original schedule, with Days 391–517 assumed.<br>
   </div>
 </section>
 </div>
@@ -198,11 +220,10 @@ const BEN = [
 ];
 const RET = [[1,100],[2,98.2],[6,93.4],[13,74.2],[20,62.3],[27,53.8],[28,53.1],[41,41.5],[55,32.3],[97,16.6],[139,9.5],[181,5.8],[223,3.7],[265,2.5],[271,2.3]];
 const EXT = [307,349,365,391,433,475,517,548];   // beyond the data: follow the weekly exit rate
-const MS = {2:{unlock:1},6:{hold:1},13:{hold:1,pl:1},20:{hold:1},27:{hold:1,pl:1,free:1},41:{hold:1},
-  55:{hold:1,pl:1,holder:1,emi:1},97:{hold:1,pl:1,free:1,emi:1},139:{hold:1,pl:1,free:1,emi:1,rain:1},181:{hold:1,pl:1,free:1,emi:1},
-  223:{hold:1,pl:1,emi:1,helmet:1},265:{hold:1,pl:1,free:1,emi:1},307:{hold:1,pl:1,emi:1,gold:1},349:{hold:1,pl:1,free:1,emi:1},
-  391:{hold:1,pl:1,emi:1},433:{hold:1,pl:1,free:1,emi:1},475:{hold:1,pl:1,emi:1},517:{hold:1,pl:1,free:1,emi:1}};
-const MDAYS = Object.keys(MS).map(Number);
+const SETS = {"rr": {"name": "Rescue before renewal, reward after", "ms": {"2": {"unlock": 1}, "6": {"hold": 1}, "13": {"pl": 1}, "20": {"hold": 1}, "29": {"free": 1}, "34": {"pl": 1}, "41": {"hold": 1}, "50": {"holder": 1}, "55": {"emi": 1}, "62": {"pl": 1}, "69": {"hold": 1}, "78": {"free": 1}, "83": {"emi": 1}, "92": {"rain": 1}, "97": {"pl": 1}, "111": {"hold": 1}, "127": {"free": 1}, "139": {"emi": 1}, "153": {"pl": 1}, "169": {"gold": 1}, "183": {"helmet": 1}, "209": {"hold": 1}, "239": {"free": 1}, "265": {"emi": 1}, "295": {"gold": 1}, "321": {"pl": 1}, "351": {"free": 1}, "377": {"emi": 1}, "407": {"gold": 1}, "433": {"hold": 1}, "463": {"free": 1}, "489": {"pl": 1}, "519": {"gold": 1}, "545": {"emi": 1}}, "meta": {"2": ["Tool", "First win in the first days; lets riders who leave early return the EV cleanly."], "6": ["Rescue", "Day 7 is the first renewal: 12.6% of riders leave, the most of any day."], "13": ["Rescue", "Day 14 renewal: 8.2% leave. Two weeks of payment history before any credit."], "20": ["Rescue", "Day 21 renewal: 5.7% leave."], "29": ["Reward", "One month. Right after the Day 28 renewal (5.3% leave), so only riders who renewed get it."], "34": ["Rescue", "Day 35 renewal: 4.5% leave."], "41": ["Rescue", "Day 42 renewal: 4.1% leave."], "50": ["Reward", "After the Day 49 renewal (4.7% leave). First goodie, once a rider has stayed seven weeks."], "55": ["Rescue", "Day 56 renewal: 4.4% leave. Moves daily-plan riders onto weekly plans."], "62": ["Rescue", "Day 63 renewal: 4.9% leave."], "69": ["Rescue", "Day 70 renewal: 3.6% leave."], "78": ["Reward", "After the Day 77 renewal (3.6% leave)."], "83": ["Rescue", "Day 84 renewal: 3.0% leave."], "92": ["Reward", "Three months, after the Day 91 renewal. Weekly exits are down to about 10%, so milestones move to every two weeks."], "97": ["Rescue", "Day 98 renewal."], "111": ["Rescue", "Day 112 renewal."], "127": ["Reward", "After the Day 126 renewal."], "139": ["Rescue", "Day 140 renewal."], "153": ["Rescue", "Day 154 renewal."], "169": ["Reward", "After the Day 168 renewal."], "183": ["Reward", "Six months, after the Day 182 renewal. Weekly exits are down to about 7%, so milestones move to every four weeks."], "209": ["Rescue", "Day 210 renewal."], "239": ["Reward", "After the Day 238 renewal."], "265": ["Rescue", "Day 266 renewal."], "295": ["Reward", "After the Day 294 renewal."], "321": ["Rescue", "Day 322 renewal."], "351": ["Reward", "After the Day 350 renewal. Close to one year."], "377": ["Rescue", "Day 378 renewal."], "407": ["Reward", "After the Day 406 renewal."], "433": ["Rescue", "Day 434 renewal."], "463": ["Reward", "After the Day 462 renewal."], "489": ["Rescue", "Day 490 renewal."], "519": ["Reward", "After the Day 518 renewal."], "545": ["Rescue", "Day 546 renewal."]}}, "fort": {"name": "Every two weeks (your version)", "ms": {"2": {"unlock": 1}, "27": {"free": 1}, "30": {"hold": 1, "pl": 1}, "44": {"hold": 1, "pl": 1}, "45": {"emi": 1}, "58": {"hold": 1, "pl": 1}, "60": {"holder": 1}, "72": {"hold": 1, "pl": 1}, "73": {"emi": 1}, "86": {"hold": 1, "pl": 1}, "90": {"rain": 1, "gold": 1}, "97": {"free": 1}, "100": {"hold": 1, "pl": 1}, "101": {"emi": 1}, "114": {"hold": 1, "pl": 1}, "128": {"hold": 1, "pl": 1}, "129": {"emi": 1}, "139": {"free": 1}, "142": {"hold": 1, "pl": 1}, "156": {"hold": 1, "pl": 1}, "157": {"emi": 1}, "170": {"hold": 1, "pl": 1}, "180": {"helmet": 1, "gold": 1}, "181": {"free": 1}, "184": {"hold": 1, "pl": 1}, "185": {"emi": 1}, "198": {"hold": 1, "pl": 1}, "212": {"hold": 1, "pl": 1}, "213": {"emi": 1}, "226": {"hold": 1, "pl": 1}, "240": {"hold": 1, "pl": 1}, "241": {"emi": 1}, "254": {"hold": 1, "pl": 1}, "265": {"free": 1}, "268": {"hold": 1, "pl": 1}, "269": {"emi": 1}, "270": {"gold": 1}, "282": {"hold": 1, "pl": 1}, "296": {"hold": 1, "pl": 1}, "297": {"emi": 1}, "310": {"hold": 1, "pl": 1}, "324": {"hold": 1, "pl": 1}, "325": {"emi": 1}, "338": {"hold": 1, "pl": 1}, "349": {"free": 1}, "352": {"hold": 1, "pl": 1}, "353": {"emi": 1}, "360": {"gold": 1}, "366": {"hold": 1, "pl": 1}, "380": {"hold": 1, "pl": 1}, "381": {"emi": 1}, "394": {"hold": 1, "pl": 1}, "408": {"hold": 1, "pl": 1}, "409": {"emi": 1}, "422": {"hold": 1, "pl": 1}, "433": {"free": 1}, "436": {"hold": 1, "pl": 1}, "437": {"emi": 1}, "450": {"hold": 1, "pl": 1, "gold": 1}, "464": {"hold": 1, "pl": 1}, "465": {"emi": 1}, "478": {"hold": 1, "pl": 1}, "492": {"hold": 1, "pl": 1}, "493": {"emi": 1}, "506": {"hold": 1, "pl": 1}, "517": {"free": 1}, "520": {"hold": 1, "pl": 1}, "521": {"emi": 1}, "534": {"hold": 1, "pl": 1}, "540": {"gold": 1}, "548": {"hold": 1, "pl": 1}}, "meta": {}}, "doc": {"name": "Concept doc", "ms": {"2": {"unlock": 1}, "6": {"hold": 1}, "13": {"hold": 1, "pl": 1}, "20": {"hold": 1}, "27": {"hold": 1, "pl": 1, "free": 1}, "41": {"hold": 1}, "55": {"hold": 1, "pl": 1, "holder": 1, "emi": 1}, "97": {"hold": 1, "pl": 1, "free": 1, "emi": 1}, "139": {"hold": 1, "pl": 1, "free": 1, "emi": 1, "rain": 1}, "181": {"hold": 1, "pl": 1, "free": 1, "emi": 1}, "223": {"hold": 1, "pl": 1, "emi": 1, "helmet": 1}, "265": {"hold": 1, "pl": 1, "free": 1, "emi": 1}, "307": {"hold": 1, "pl": 1, "emi": 1, "gold": 1}, "349": {"hold": 1, "pl": 1, "free": 1, "emi": 1}, "391": {"hold": 1, "pl": 1, "emi": 1}, "433": {"hold": 1, "pl": 1, "free": 1, "emi": 1}, "475": {"hold": 1, "pl": 1, "emi": 1}, "517": {"hold": 1, "pl": 1, "free": 1, "emi": 1}}, "meta": {}}};
+let CUR = 'rr', MS = {}, MDAYS = [];
+function loadSet(k){ CUR=k; MS = JSON.parse(JSON.stringify(SETS[k].ms)); MDAYS = Object.keys(MS).map(Number).sort((a,b)=>a-b); }
+loadSet('rr');
 const H = 548, W4 = 28, N = 1000;
 const $ = id => document.getElementById(id);
 const rs = n => '₹' + Math.round(n).toLocaleString('en-IN');
@@ -218,9 +239,15 @@ function build(){
     <td class="r">${i===0?'100':`<input type="number" class="sm" data-r="${i}" value="${r[1]}">`}</td>
     <td class="r" id="ru${i}"></td><td class="r" id="rn${i}"></td><td class="r" id="rd${i}"></td></tr>`).join('') +
     EXT.map(d=>`<tr><td>Day ${d}</td><td class="r neg" id="xh${d}"></td><td class="r" id="xu${d}"></td><td class="r" id="xn${d}"></td><td class="r" id="xd${d}"></td></tr>`).join('');
-  $('msT').querySelector('thead').innerHTML = `<tr><th>Bounce Day</th>${BEN.map(b=>`<th class="r">${b.n}</th>`).join('')}<th class="r">Cost per rider ₹</th></tr>`;
-  $('msT').querySelector('tbody').innerHTML = MDAYS.map(d=>`<tr><td>Day ${d}</td>${BEN.map(b=>`<td class="r"><input type="number" class="sm" data-m="${d}" data-k="${b.k}" value="${MS[d][b.k]||0}"></td>`).join('')}<td class="r" id="mc${d}"></td></tr>`).join('') +
-    `<tr class="tot"><td>In 18 months</td>${BEN.map(b=>`<td class="r" id="yr_${b.k}"></td>`).join('')}<td class="r" id="mcTot"></td></tr>`;
+  buildMs();
+}
+function buildMs(){
+  const meta = SETS[CUR].meta, hasMeta = Object.keys(meta).length>0;
+  $('setBtns').innerHTML = Object.entries(SETS).map(([k,s])=>`<button class="${k===CUR?'on':''}" data-set="${k}">${s.name}</button>`).join('');
+  $('msThink').style.display = CUR==='rr' ? '' : 'none';
+  $('msT').querySelector('thead').innerHTML = `<tr><th>Bounce Day</th>${hasMeta?'<th>Type</th>':''}${BEN.map(b=>`<th class="r">${b.n}</th>`).join('')}<th class="r">Cost per rider ₹</th>${hasMeta?'<th style="padding-left:18px">Why this day</th>':''}</tr>`;
+  $('msT').querySelector('tbody').innerHTML = MDAYS.map(d=>`<tr><td>Day ${d}</td>${hasMeta?`<td><span class="ty ${(meta[d]||[''])[0].toLowerCase()}">${(meta[d]||[''])[0]}</span></td>`:''}${BEN.map(b=>`<td class="r"><input type="number" class="sm" data-m="${d}" data-k="${b.k}" value="${MS[d][b.k]||0}"></td>`).join('')}<td class="r" id="mc${d}"></td>${hasMeta?`<td class="how">${(meta[d]||['',''])[1]}</td>`:''}</tr>`).join('') +
+    `<tr class="tot"><td>In 18 months</td>${hasMeta?'<td></td>':''}${BEN.map(b=>`<td class="r" id="yr_${b.k}"></td>`).join('')}<td class="r" id="mcTot"></td>${hasMeta?'<td></td>':''}</tr>`;
 }
 
 // history curve: share of new riders reaching Bounce Day d (exponential decay between the points given)
@@ -311,6 +338,7 @@ function calc(){
   ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
 }
 
+document.addEventListener('click', e=>{ const b=e.target.closest('[data-set]'); if(!b) return; loadSet(b.dataset.set); buildMs(); calc(); });
 document.addEventListener('input', e=>{
   const t=e.target;
   if(t.dataset.b!==undefined) BEN[+t.dataset.b][t.dataset.f] = +t.value;
