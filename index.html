@@ -98,7 +98,17 @@
   .per{display:flex;align-items:center;gap:12px;margin-top:10px}
   .per label{font-size:13.5px;font-weight:600}
   .per input{width:90px}
-  .prop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .prop{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .sb{margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+  .sb.first{margin-top:16px;padding-top:0;border-top:0}
+  .sb h4{font-size:15px;font-weight:700;color:var(--h);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .sb h4:before{content:"";width:4px;height:16px;border-radius:2px;background:var(--red)}
+  .sb .ups{margin-top:0}
+  .sb .tiles{margin-top:14px}
+  table.ptab{width:100%;margin-top:0;font-size:14px}
+  table.ptab th{font-size:12.5px;padding:10px 14px}
+  table.ptab td{padding:14px 14px;vertical-align:top;line-height:1.4}
+  table.ptab td small{display:block;font-size:12.5px;color:var(--s);margin-top:3px;font-weight:400}
   .pc{background:var(--red-t);border:1px solid var(--red-l);border-radius:14px;padding:16px 16px 14px;position:relative}
   .pc .pn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:700;margin-bottom:8px}
   .pc b{display:block;font-size:16px;color:var(--h)}
@@ -143,31 +153,33 @@
 
 <section id="s-snap" class="sec r snap">
   <h2><i></i>Snapshot</h2>
+  <div class="sb first"><h4>What we are proposing</h4>
   <div class="prop">
     <div class="pc"><span class="pn">1</span><b>At launch: welcome benefits</b><p>Every existing rider gets a one-time gift, sized by their Bounce Days (see Welcome benefits). Inactive riders get it after they come back and pay.</p></div>
     <div class="pc"><span class="pn">2</span><b>Bounce Days counted on actuals</b><p>Each rider starts from the paid rental days they already have. Nothing is reset.</p></div>
     <div class="pc"><span class="pn">3</span><b>Same milestones for everyone</b><p>New and existing riders follow one milestone schedule, from their current Bounce Day onwards.</p></div>
   </div>
+  </div>
 
-  <h3>Who pays, who earns</h3>
-  <table class="slim"><thead><tr><th>Segment</th><th>Extra money from</th><th>Cost</th></tr></thead><tbody>
-    <tr><td><b>New riders</b></td><td>Longer journeys + more come back after leaving</td><td>Milestones</td></tr>
-    <tr><td><b>Active riders</b></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
-    <tr><td><b>Natural returners</b> <span class="unit">inactive on 7 Dec, back anyway</span></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
-    <tr><td><b>Extra returners</b> <span class="unit">inactive on 7 Dec, back because of the programme</span></td><td>All their rental days after return</td><td>Welcome gift + milestones</td></tr>
-  </tbody></table>
+  <div class="sb"><h4>Who pays, who earns</h4>
+  <table class="ptab"><thead><tr><th style="width:30%">Segment</th><th style="width:40%">Extra money from</th><th>Cost to Bounce</th></tr></thead><tbody>
+    <tr><td><b>New riders</b><small>First rental on or after 7 Dec</small></td><td>Longer journeys + more come back after leaving</td><td>Milestones</td></tr>
+    <tr><td><b>Active riders</b><small>Renting on 7 Dec</small></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Natural returners</b><small>Inactive on 7 Dec, would have come back anyway</small></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Extra returners</b><small>Inactive on 7 Dec, came back because of the programme</small></td><td>All their rental days after return</td><td>Welcome gift + milestones</td></tr>
+  </tbody></table></div>
 
-  <h3>Metrics to watch</h3>
+  <div class="sb"><h4>Metrics to watch</h4>
   <div class="ups">
     <div class="up"><div class="k">All renting riders</div><div class="v" style="font-size:20px">Journey length (projected)</div>
       <div class="d">Average rental days in one journey (first plan plus renewals, until the EV is returned), at the current exit rate, compared at the same Bounce Day. Covers every rider, isn't skewed by plan length, readable weekly, and converts straight into rental days.</div></div>
     <div class="up"><div class="k">Riders who stop renting</div><div class="v" style="font-size:20px">Return rate (30 days)</div>
       <div class="d">Share who pay for a plan again within 30 days of stopping: riders whose journey ends after launch, and riders already inactive on 7 Dec. Only returns above today's rate count (<span id="la_r0Base"></span> after a journey ends, <span id="la_rrBase"></span> for riders inactive on 7 Dec). Both metrics' margin is counted against the cost.</div></div>
-  </div>
+  </div></div>
 
-  <h3>Output summary</h3>
+  <div class="sb"><h4>Output summary</h4>
   <div class="per"><label for="la_months">Output period</label><input type="number" id="la_months" value="6" min="1" max="18"><span class="unit">months from launch (1–18)</span></div>
-  <div class="tiles snapt" id="la_snap"></div>
+  <div class="tiles snapt" id="la_snap"></div></div>
 </section>
 <section id="s-l2" class="sec r">
   <h2><i></i>Totals and uptick <span class="sub">to <span id="la_end1"></span></span></h2>
