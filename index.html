@@ -105,6 +105,7 @@
   .pc p{font-size:13px;color:var(--b);margin-top:6px;line-height:1.45}
   table.slim{max-width:760px}
   .snapt{grid-template-columns:repeat(5,1fr)}
+  #tiles{grid-template-columns:repeat(5,1fr)}
   .snapt .tile:nth-child(n){background:#fff;border-color:var(--line)} .snapt .tile:before{background:#9AA3B5}
   .snapt .tile:nth-child(2) .v,.snapt .tile:nth-child(3) .v{color:var(--red)} .snapt .tile:nth-child(2):before,.snapt .tile:nth-child(3):before{background:var(--red)}
   .snapt .tile:nth-child(4) .v,.snapt .tile:nth-child(5) .v{color:var(--green)} .snapt .tile:nth-child(4):before,.snapt .tile:nth-child(5):before{background:var(--green)}
@@ -148,18 +149,18 @@
 
   <h3>Who pays, who earns</h3>
   <table class="slim"><thead><tr><th>Segment</th><th>Extra money from</th><th>Cost</th></tr></thead><tbody>
-    <tr><td><b>New riders</b></td><td>Longer journeys</td><td>Milestones</td></tr>
-    <tr><td><b>Active riders</b></td><td>Longer journeys</td><td>Welcome gift + milestones</td></tr>
-    <tr><td><b>Natural returners</b></td><td>Longer journeys after return</td><td>Welcome gift + milestones</td></tr>
-    <tr><td><b>Extra returners</b></td><td>All their rental days after return</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>New riders</b></td><td>Longer journeys + more come back after leaving</td><td>Milestones</td></tr>
+    <tr><td><b>Active riders</b></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Natural returners</b> <span class="unit">inactive on 7 Dec, back anyway</span></td><td>Longer journeys + more come back after leaving</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Extra returners</b> <span class="unit">inactive on 7 Dec, back because of the programme</span></td><td>All their rental days after return</td><td>Welcome gift + milestones</td></tr>
   </tbody></table>
 
   <h3>Metrics to watch</h3>
   <div class="ups">
     <div class="up"><div class="k">All renting riders</div><div class="v" style="font-size:20px">Journey length (projected)</div>
       <div class="d">Average rental days in one journey (first plan plus renewals, until the EV is returned), at the current exit rate, compared at the same Bounce Day. Covers every rider, isn't skewed by plan length, readable weekly, and converts straight into rental days.</div></div>
-    <div class="up"><div class="k">Riders inactive on 7 Dec</div><div class="v" style="font-size:20px">Return rate (90 days)</div>
-      <div class="d">Share who pay for a plan within 90 days of launch. Only returns above the natural rate (<span id="la_rrBase"></span>) count.</div></div>
+    <div class="up"><div class="k">Riders who stop renting</div><div class="v" style="font-size:20px">Return rate (30 days)</div>
+      <div class="d">Share who pay for a plan again within 30 days of stopping: riders whose journey ends after launch, and riders already inactive on 7 Dec. Only returns above today's rate count (<span id="la_r0Base"></span> after a journey ends, <span id="la_rrBase"></span> for riders inactive on 7 Dec). Both metrics' margin is counted against the cost.</div></div>
   </div>
 
   <h3>Output summary</h3>
@@ -173,6 +174,7 @@
     <div><label>Launch date</label><div class="derived" style="background:#F6F5F3;border-color:var(--line);color:var(--h)">7 Dec 2026</div></div>
     <div><label>New riders per week</label><input type="number" id="la_new" value="845"></div>
     <div><label>Return rate rises by <span class="unit">% (you set)</span></label><input type="number" id="la_y" value="20"></div>
+    <div><label>Riders who come back within 30 days of ending a journey, today <span class="unit">%</span></label><input type="number" id="la_r0" value="22.2" step="0.1"></div>
     <div><label>Journey length rises by <span class="unit">% (solved for break-even)</span></label><div class="derived" id="la_xOut"></div></div>
   </div>
   <p class="note">Runs to <span id="la_end2"></span> (the output period in the Snapshot). Benefit costs, Used %, milestones, margin and the retention curve come from the sections below, so changing them here or there updates everything.</p>
@@ -186,7 +188,7 @@
 <section id="s-l2" class="sec r">
   <h2><i></i><span class="lev">Level 2</span>Totals to <span id="la_end1"></span>, and the uptick needed</h2>
   <div class="ups" id="la_ups"></div>
-  <table class="lt"><thead><tr><th>Segment</th><th class="r">Riders</th><th class="r">Extra rental days</th><th class="r">Extra margin</th><th class="r">Welcome gifts</th><th class="r">Milestone benefits</th><th class="r">Total cost</th><th class="r">Net</th></tr></thead><tbody id="la_l2"></tbody></table>
+  <table class="lt"><thead><tr><th>Segment</th><th class="r">Riders</th><th class="r">Extra rental days</th><th class="r">Margin: longer journeys</th><th class="r">Margin: returns</th><th class="r">Welcome gifts</th><th class="r">Milestone benefits</th><th class="r">Total cost</th><th class="r">Net</th></tr></thead><tbody id="la_l2"></tbody></table>
 </section>
 <section id="s-l3" class="sec g">
   <h2><i></i><span class="lev">Level 3</span>Week by week</h2>
@@ -198,7 +200,7 @@
 </section>
 <section id="s-l4" class="sec g">
   <h2><i></i><span class="lev">Level 4</span>By bucket</h2>
-  <div class="scroll" style="margin-top:12px"><table class="lt" style="margin-top:0"><thead><tr><th>Segment</th><th>Bucket</th><th class="r">Riders</th><th class="r">Extra rental days</th><th class="r">Extra margin</th><th class="r">Welcome gifts</th><th class="r">Milestone benefits</th><th class="r">Total cost</th><th class="r">Net</th><th>Uptick needed</th></tr></thead><tbody id="la_l4"></tbody></table></div>
+  <div class="scroll" style="margin-top:12px"><table class="lt" style="margin-top:0"><thead><tr><th>Segment</th><th>Bucket</th><th class="r">Riders</th><th class="r">Extra rental days</th><th class="r">Margin: longer journeys</th><th class="r">Margin: returns</th><th class="r">Welcome gifts</th><th class="r">Milestone benefits</th><th class="r">Total cost</th><th class="r">Net</th><th>Uptick needed</th></tr></thead><tbody id="la_l4"></tbody></table></div>
   <p class="note">Active riders are grouped by Bounce Day at launch; returners by time away on 7 Dec. Buckets follow where the exit curve and the return curve change slope.</p>
 </section>
 <section id="s-res" class="sec r">
@@ -280,6 +282,7 @@
     Everything follows 1,000 new riders for 18 months (548 Bounce Days). Results are stated as <b>journey length</b>: the average rental days in one journey (first plan plus renewals, until the EV is returned), at the current exit rate, compared at the same Bounce Day. The retention data (share of riders reaching each Bounce Day) is only the input that exit rates are taken from.<br>
     Margin per rental day = rent − energy − maintenance − bike − misc. Margin given back is measured against this.<br>
     Cost per grant = cost per use × used %. Cost per rider at a milestone = sum of (benefits given × cost per grant).<br>
+    Returns: riders who end a journey come back within 30 days at today's rate (22.2% by default, from the data), raised by the return lift you set. A rider who comes back resumes at their Bounce Day after about 15 days off. The extra rental days from these returns are counted against the cost alongside the extra days from longer journeys.<br>
     Journey length variable: every daily exit rate is divided by (1 + the % entered), so journeys are that much longer or shorter before the programme starts.<br>
     Results: the model cuts every exit rate by the same %, until the margin on the extra rental days equals the benefit cost. A cut of X in exit rates is journeys longer by 1 ÷ (1 − X) − 1. Benefits are costed on the longer journeys, so riders the programme keeps also earn benefits.<br>
     Every four weeks: the same break-even, counting only costs and rental days up to that week. Early weeks carry costs before most of the extra days arrive, so they need more.<br>
@@ -382,12 +385,13 @@ function calc(){
   $('tailNote').textContent = `Retention data covers only the first ${lastDay} Bounce Days. After Day ${lastDay}, the model assumes the same share of the remaining riders leaves every week, both up to Day ${H} and after it.`;
 
   // break-even up to day T: cut every exit rate by y until extra margin to T = benefit cost to T
+  const Yr = +$('la_y').value/100, R0m = +$('la_r0').value/100, pR = Math.min(0.95, R0m*Yr);
   function breakEven(T){
     const base = N*daysIn(B,1,T);
-    const gain = y => { const P = curve(k0*(1-y)); return (N*daysIn(P,1,T)-base)*perDayX - costOn(P,T); };
+    const gain = y => { const P = curve(k0*(1-y)*(1-pR)); const gapDays = N*(1-P[Math.min(T,H)])*pR/(1-pR)*15; return (N*daysIn(P,1,T)-gapDays-base)*perDayX - costOn(P,T); };
     if(perDayX<=0 || gain(0.999) < 0) return null;
     const y = solve(v => gain(v) >= 0, 0, 0.999);
-    return {y, P:curve(k0*(1-y))};
+    return {y, P:curve(k0*(1-y)*(1-pR))};
   }
 
   // milestones
@@ -424,6 +428,7 @@ function calc(){
     ['Benefit cost per new rider', rs(totCost/N), `${rs(totCost)} for ${num(N)} new riders`],
     ['Margin given back', pct(totCost/baseMargin), `${pct(totCost/(baseDays*rent))} of revenue`],
     ['Journey length needed', be?'+'+pct(1/(1-be.y)-1):'Not possible', be?`${JLb.toFixed(1)} → ${(JLb/(1-be.y)).toFixed(1)} days; exits fall ${pct(be.y,0)}`:'benefits cost more than longer journeys can earn'],
+    ['Return rate needed (30 days)', '+'+pct(Yr,0), `after a journey ends ${pct(R0m)} → ${pct(R0m*(1+Yr))} (set in Launch inputs)`],
     ['Rental days must grow by', be?pct(extraDays/baseDays,0):'–', be?`${num(extraDays)} extra days on ${num(baseDays)}`:''],
   ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
   launchCalc();
@@ -453,21 +458,21 @@ function laSurv(k){ const S=new Float64Array(LA_DMAX+2), CS=new Float64Array(LA_
   for(let d=1; d<=LA_DMAX; d++) S[d+1]=S[d]*(1-Math.min(1,k*LA_H[d]));
   for(let d=1; d<=LA_DMAX+1; d++) CS[d]=CS[d-1]+S[d]; return {S,CS}; }
 function laGift(b){ const w=LA_WG[laBand(b)]; const g=LA_CTX.grantK; return w.hold*g.hold + w.pl*g.pl + w.free*g.free; }
-function laNew(n){ const z=()=>new Float64Array(n); return {d:z(), m:z(), g:z()}; }
+function laNew(n){ const z=()=>new Float64Array(n); return {d:z(), m:z(), g:z(), x:z()}; }
 // expected rental days, milestone cost and welcome gifts per period, for every segment and bucket, at exit multiplier k
 function laEval(k, Yf, q){
   const {S,CS}=laSurv(k), NP=PER.length, perM=LA_CTX.perM;
   const out={nw:laNew(NP), act:LA_BN.map(()=>laNew(NP)), nat:LA_GAPS.map(()=>laNew(NP)), ext:LA_GAPS.map(()=>laNew(NP))};
   const addPath=(o,w,b,t0,withGift)=>{   // rider at Bounce Day b on calendar day t0, weight w
     const sb=S[b]; if(sb<=0 || w===0) return;
-    for(let p=PIDX[t0]; p<NP; p++){ const P=PER[p], lo=Math.max(P.a,t0); o.d[p]+= w*(CS[b+P.e-t0]-CS[b+lo-t0-1])/sb; }
+    for(let p=PIDX[t0]; p<NP; p++){ const P=PER[p], lo=Math.max(P.a,t0); o.d[p]+= w*(CS[b+P.e-t0]-CS[b+lo-t0-1])/sb; o.x[p]+= w*(S[b+lo-t0]-S[b+P.e-t0+1])/sb; }
     for(const m of MDAYS){ if(m<=b) continue; const t=t0+m-b; if(t>=LA_T) break; o.m[PIDX[t]] += w*S[m]/sb*perM[m]; }
     if(withGift) o.g[PIDX[t0]] += w*laGift(b);
   };
   for(const [bs,n] of Object.entries(LA_ACTIVE)){ const b=+bs; addPath(out.act[laBand(b)], n, b, 0, true); }
   for(let t0=0; t0<LA_T; t0++) addPath(out.nw, q, 1, t0, false);
   LA_GAPS.forEach(([,names],j)=>{ for(const nm of names){ const bn=LA_BINS.find(x=>x[0]===nm); const [ , N, med, r30, r90]=bn; const b=Math.round(med)+1;
-    for(let t0=0; t0<90; t0++){ const f=(t0<30 ? r30/30 : (r90-r30)/60)/100; const w=N*f; addPath(out.nat[j], w, b, t0, true); addPath(out.ext[j], w*Yf, b, t0, true); } } });
+    for(let t0=0; t0<30; t0++){ const w=N*r30/30/100; addPath(out.nat[j], w, b, t0, true); addPath(out.ext[j], w*Yf, b, t0, true); } } });
   return out;
 }
 const laSum = a => a.reduce((x,y)=>x+y,0);
@@ -493,45 +498,51 @@ function launchCalc(){
   // welcome gift table
   $('la_wgT').innerHTML = LA_BN.map((n,i)=>`<tr><td>${n}</td>${['hold','pl','free'].map(k=>`<td class="r"><input type="number" class="sm" data-wg="${i}" data-k="${k}" value="${LA_WG[i][k]}"></td>`).join('')}<td class="r">${rs(LA_WG[i].hold*gk.hold+LA_WG[i].pl*gk.pl+LA_WG[i].free*gk.free)}</td></tr>`).join('');
   const base = laEval(k0, 0, q);
-  const seg = (pr) => {   // per period margin and cost for each segment
+  const R0 = +$('la_r0').value/100, pRet = Math.min(0.95, R0*Y), GAPD = 15;   // extra returns after a journey ends; ~15 days off the road before coming back
+  const seg = (X) => {   // per period margin (longer journeys + returns) and cost, for each segment
+    const J = laEval(k0*(1-X), Y, q), F = pRet>0 ? laEval(k0*(1-X)*(1-pRet), Y, q) : J;
+    const gap = o => Array.from(o.x, v => v*pRet/(1-pRet)*GAPD);
     const r={};
-    const one = (o,bo,isExt) => ({mg:Array.from(o.d,(v,p)=> (isExt ? v : v-bo.d[p])*perDayX), cost:Array.from(o.m,(v,p)=>v+o.g[p]), d:Array.from(o.d,(v,p)=> isExt ? v : v-bo.d[p]), m:o.m, g:o.g});
-    r.nw = one(pr.nw, base.nw, false);
-    r.act = pr.act.map((o,i)=>one(o, base.act[i], false));
-    r.nat = pr.nat.map((o,i)=>one(o, base.nat[i], false));
-    r.ext = pr.ext.map((o,i)=>one(o, null, true));
+    const one = (jo,fo,bo,isExt) => { const g=gap(fo);
+      const dJ = Array.from(jo.d,(v,p)=> isExt ? 0 : v-bo.d[p]);
+      const dR = Array.from(fo.d,(v,p)=> isExt ? v-g[p] : v-jo.d[p]-g[p]);
+      return {mgJ:dJ.map(v=>v*perDayX), mgR:dR.map(v=>v*perDayX), mg:dJ.map((v,p)=>(v+dR[p])*perDayX), d:dJ.map((v,p)=>v+dR[p]), cost:Array.from(fo.m,(v,p)=>v+fo.g[p]), m:fo.m, g:fo.g}; };
+    r.nw = one(J.nw, F.nw, base.nw, false);
+    r.act = J.act.map((o,i)=>one(o, F.act[i], base.act[i], false));
+    r.nat = J.nat.map((o,i)=>one(o, F.nat[i], base.nat[i], false));
+    r.ext = J.ext.map((o,i)=>one(o, F.ext[i], null, true));
     const tot = new Float64Array(NP);
     const addTo = s => { for(let p=0;p<NP;p++) tot[p]+= s.mg[p]-s.cost[p]; };
     addTo(r.nw); r.act.forEach(addTo); r.nat.forEach(addTo); r.ext.forEach(addTo);
     let c=0; r.cum = Array.from(tot, v=>c+=v); return r;
   };
   // break-even search: exits fall by X (journey length rises by 1/(1-X)-1)
-  const grid=[]; for(let x=0; x<=0.9001; x+=0.01) grid.push([x, seg(laEval(k0*(1-x), Y, q)).cum]);
+  const grid=[]; for(let x=0; x<=0.9001; x+=0.01) grid.push([x, seg(x).cum]);
   const solveAt = p => { if(grid[0][1][p]>=0) return 0; for(let i=1;i<grid.length;i++){ const [x1,c1]=grid[i], [x0,c0]=grid[i-1]; if(c1[p]>=0) return x0+(x1-x0)*(-c0[p])/(c1[p]-c0[p]); } return null; };
   let X = solveAt(NP-1);
-  if(X!==null && X>0){ let lo=Math.max(0,X-0.01), hi=Math.min(0.9,X+0.01); for(let i=0;i<30;i++){ const mid=(lo+hi)/2; if(seg(laEval(k0*(1-mid),Y,q)).cum[NP-1]>=0) hi=mid; else lo=mid; } X=hi; }
-  const R = seg(laEval(k0*(1-(X??0)), Y, q));
+  if(X!==null && X>0){ let lo=Math.max(0,X-0.01), hi=Math.min(0.9,X+0.01); for(let i=0;i<30;i++){ const mid=(lo+hi)/2; if(seg(mid).cum[NP-1]>=0) hi=mid; else lo=mid; } X=hi; }
+  const R = seg(X??0);
   // journey length: 1 / weighted exit rate per rental day (bands weighted by active riders at launch)
   const {JL0, bandH, actN, actT} = laJL(k0);
   const jl = x => x===null ? null : JL0/(1-x);
-  const inact = laSum(LA_BINS.map(b=>b[1])), natN = laSum(LA_BINS.map(b=>b[1]*b[4]/100)), rr0 = natN/inact;
-  $('la_rrBase').textContent = pct(rr0);
+  const inact = laSum(LA_BINS.map(b=>b[1])), natN = laSum(LA_BINS.map(b=>b[1]*b[3]/100)), rr0 = natN/inact;
+  $('la_rrBase').textContent = pct(rr0); $('la_r0Base').textContent = pct(R0);
   $('la_xOut').innerHTML = X===null ? 'Not reachable' : `+${pct(1/(1-X)-1)}<small>exits fall ${pct(X)}</small>`;
   // Level 2
   $('la_ups').innerHTML = `<div class="up"><div class="k">Journey length (projected) must rise to</div><div class="v">${X===null?'Not reachable':jl(X).toFixed(1)+' days'}</div><div class="d">from ${JL0.toFixed(1)} days${X===null?'':` (+${pct(1/(1-X)-1)})`}. Applies to every renting rider: new, active and returned.</div></div>
-    <div class="up"><div class="k">Return rate (90 days) must rise to</div><div class="v">${pct(rr0*(1+Y))}</div><div class="d">from ${pct(rr0)} (+${pct(Y,0)}) of the ${num(inact)} riders inactive on 7 Dec: ${num(natN*Y)} extra returners. You set this; the journey length is solved to match.</div></div>`;
-  const agg = list => { const o={d:0,mg:0,g:0,m:0}; list.forEach(s=>{ o.d+=laSum(s.d); o.mg+=laSum(s.mg); o.g+=laSum(s.g); o.m+=laSum(s.m); }); return o; };
+    <div class="up"><div class="k">Return rate (30 days) must rise by</div><div class="v">+${pct(Y,0)}</div><div class="d">After a journey ends: ${pct(R0)} → ${pct(R0*(1+Y))}. Riders inactive on 7 Dec: ${pct(rr0)} → ${pct(rr0*(1+Y))} (${num(natN*Y)} extra returners). You set this; the journey length is solved to match.</div></div>`;
+  const agg = list => { const o={d:0,mg:0,mgJ:0,mgR:0,g:0,m:0}; list.forEach(s=>{ o.d+=laSum(s.d); o.mg+=laSum(s.mg); o.mgJ+=laSum(s.mgJ); o.mgR+=laSum(s.mgR); o.g+=laSum(s.g); o.m+=laSum(s.m); }); return o; };
   const rowsL2 = [['New riders', q*LA_T, agg([R.nw])], ['Active riders', actT, agg(R.act)], ['Natural returners', natN, agg(R.nat)], ['Extra returners', natN*Y, agg(R.ext)]];
-  const T2 = {d:0,mg:0,g:0,m:0}; rowsL2.forEach(([, ,o])=>{ for(const k in T2) T2[k]+=o[k]; });
-  const cells = o => `<td class="r">${num(o.d)}</td><td class="r">${laMoney(o.mg)}</td><td class="r">${o.g?laMoney(o.g):'–'}</td><td class="r">${laMoney(o.m)}</td><td class="r">${laMoney(o.g+o.m)}</td><td class="r ${o.mg-o.g-o.m>=0?'pos':'negv'}">${Math.abs(o.mg-o.g-o.m)<5e4?'≈ ₹0':(o.mg-o.g-o.m>0?'+':'')+laMoney(o.mg-o.g-o.m)}</td>`;
+  const T2 = {d:0,mg:0,mgJ:0,mgR:0,g:0,m:0}; rowsL2.forEach(([, ,o])=>{ for(const k in T2) T2[k]+=o[k]; });
+  const cells = o => `<td class="r">${num(o.d)}</td><td class="r">${laMoney(o.mgJ)}</td><td class="r">${laMoney(o.mgR)}</td><td class="r">${o.g?laMoney(o.g):'–'}</td><td class="r">${laMoney(o.m)}</td><td class="r">${laMoney(o.g+o.m)}</td><td class="r ${o.mg-o.g-o.m>=0?'pos':'negv'}">${Math.abs(o.mg-o.g-o.m)<5e4?'≈ ₹0':(o.mg-o.g-o.m>0?'+':'')+laMoney(o.mg-o.g-o.m)}</td>`;
   const baseDays = laSum(base.nw.d) + base.act.reduce((a,o)=>a+laSum(o.d),0) + base.nat.reduce((a,o)=>a+laSum(o.d),0);
   const totCost = T2.g + T2.m;
   $('la_snap').innerHTML = [
     ['Time period', `${M} month${M>1?'s':''}`, `7 Dec 2026 to ${endTxt}`],
-    ['Total cost', laMoney(totCost), `welcome gifts ${laMoney(T2.g)} + milestones ${laMoney(T2.m)}`],
+    ['Total cost', laMoney(totCost), `welcome gifts ${laMoney(T2.g)} + milestones ${laMoney(T2.m)}; paid back by ${laMoney(T2.mgJ)} from longer journeys + ${laMoney(T2.mgR)} from returns`],
     ['Margin given back', pct(totCost/(baseDays*perDay)), `of the margin all riders earn in the period`],
     ['Journey length needed', X===null?'Not reachable':`+${pct(1/(1-X)-1)}`, X===null?'benefits cost more than longer journeys can earn':`${JL0.toFixed(1)} → ${jl(X).toFixed(1)} days`],
-    ['Return rate needed', `+${pct(Y,0)}`, `${pct(rr0)} → ${pct(rr0*(1+Y))} · ${num(natN*Y)} extra riders`],
+    ['Return rate needed (30 days)', `+${pct(Y,0)}`, `after a journey ends ${pct(R0)} → ${pct(R0*(1+Y))} · inactive on 7 Dec ${pct(rr0)} → ${pct(rr0*(1+Y))}`],
   ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
   $('la_l2').innerHTML = rowsL2.map(([n,r,o])=>`<tr><td>${n}</td><td class="r">${num(r)}</td>${cells(o)}</tr>`).join('') + `<tr class="tot"><td>Total</td><td></td>${cells(T2)}</tr>`;
   // Level 3
@@ -545,10 +556,10 @@ function launchCalc(){
   const jlTxt = i => X===null ? '–' : `Journey length ${(1/bandH[i]).toFixed(0)} → ${(1/bandH[i]/(1-X)).toFixed(0)} days`;
   let h = r4('New riders','All (start at Day 1)',R.nw,q*LA_T, X===null?'–':`Journey length ${JL0.toFixed(1)} → ${jl(X).toFixed(1)} days`, false);
   R.act.forEach((o,i)=> h += r4(i?'':'Active riders', 'Bounce Day '+LA_BN[i], o, actN[i], jlTxt(i), i===0));
-  LA_GAPS.forEach(([g,names],j)=>{ const bs=LA_BINS.filter(b=>names.includes(b[0])); const N=laSum(bs.map(b=>b[1])), nn=laSum(bs.map(b=>b[1]*b[4]/100));
+  LA_GAPS.forEach(([g,names],j)=>{ const bs=LA_BINS.filter(b=>names.includes(b[0])); const N=laSum(bs.map(b=>b[1])), nn=laSum(bs.map(b=>b[1]*b[3]/100));
     const med = bs.reduce((a,b)=>a+b[1]*b[2],0)/N; h += r4(j?'':'Natural returners', g, R.nat[j], nn, jlTxt(laBand(Math.round(med)+1)), j===0); });
-  LA_GAPS.forEach(([g,names],j)=>{ const bs=LA_BINS.filter(b=>names.includes(b[0])); const N=laSum(bs.map(b=>b[1])), nn=laSum(bs.map(b=>b[1]*b[4]/100));
-    h += r4(j?'':'Extra returners', g, R.ext[j], nn*Y, `Return rate ${pct(nn/N)} → ${pct(nn/N*(1+Y))}`, j===0); });
+  LA_GAPS.forEach(([g,names],j)=>{ const bs=LA_BINS.filter(b=>names.includes(b[0])); const N=laSum(bs.map(b=>b[1])), nn=laSum(bs.map(b=>b[1]*b[3]/100));
+    h += r4(j?'':'Extra returners', g, R.ext[j], nn*Y, `Return rate (30 days) ${pct(nn/N)} → ${pct(nn/N*(1+Y))}`, j===0); });
   h += `<tr class="tot"><td>Total</td><td></td><td></td>${cells(T2)}<td>${X===null?'Not reachable':`Journey length +${pct(1/(1-X)-1)} · Return rate +${pct(Y,0)}`}</td></tr>`;
   $('la_l4').innerHTML = h;
 }
