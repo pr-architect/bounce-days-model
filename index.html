@@ -92,6 +92,12 @@
   #msT td.how{min-width:420px;white-space:normal}
   #msT th:first-child,#msT td:first-child{white-space:nowrap}
   .snap{border-color:var(--red-l)}
+  .divider{display:flex;align-items:center;gap:14px;margin:34px 0 6px;color:var(--s);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+  .divider:before,.divider:after{content:"";flex:1;height:1px;background:#D9D5D0}
+  .navsep{height:1px;background:var(--line);margin:10px 6px 2px}
+  .per{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .per label{font-size:13.5px;font-weight:600}
+  .per input{width:90px}
   .prop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
   .pc{background:var(--red-t);border:1px solid var(--red-l);border-radius:14px;padding:16px 16px 14px;position:relative}
   .pc .pn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:700;margin-bottom:8px}
@@ -124,7 +130,7 @@
 <body>
 <aside class="side">
   <div class="brand"><span class="logo">B</span><div><b>Bounce Days</b><small>Break-even model</small></div></div>
-  <nav id="nav"><a class="snapnav" href="#s-snap" data-s="s-snap"><i class="r"></i>Snapshot</a><div class="grp">Launch</div><a href="#s-l0" data-s="s-l0"><i class="n"></i>Launch inputs</a><a href="#s-lw" data-s="s-lw"><i class="n"></i>Welcome gifts</a><a href="#s-l2" data-s="s-l2"><i class="r"></i>Totals and uptick</a><a href="#s-l3" data-s="s-l3"><i class="g"></i>Week by week</a><a href="#s-l4" data-s="s-l4"><i class="g"></i>By bucket</a><div class="grp">Math</div><a href="#s-res" data-s="s-res"><i class="r"></i>Output summary</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-cfg" data-s="s-cfg"><i class="g"></i>Additional configs</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Break-even math</a><div class="grp">Benefits cost</div><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits' cost</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><div class="grp">Method</div><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
+  <nav id="nav"><a class="snapnav" href="#s-snap" data-s="s-snap"><i class="r"></i>Snapshot</a><div class="navsep"></div><div class="grp">Launch</div><a href="#s-l0" data-s="s-l0"><i class="n"></i>Launch inputs</a><a href="#s-lw" data-s="s-lw"><i class="n"></i>Welcome gifts</a><a href="#s-l2" data-s="s-l2"><i class="r"></i>Totals and uptick</a><a href="#s-l3" data-s="s-l3"><i class="g"></i>Week by week</a><a href="#s-l4" data-s="s-l4"><i class="g"></i>By bucket</a><div class="grp">Math</div><a href="#s-res" data-s="s-res"><i class="r"></i>Output summary</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-cfg" data-s="s-cfg"><i class="g"></i>Additional configs</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Break-even math</a><div class="grp">Benefits cost</div><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits' cost</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Retention data</a><div class="grp">Method</div><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
   <button class="reset" onclick="location.reload()">↺ Reset all values</button>
 </aside>
 <div class="wrap">
@@ -157,8 +163,10 @@
   </div>
 
   <h3>Output summary</h3>
+  <div class="per"><label for="la_months">Output period</label><input type="number" id="la_months" value="6" min="1" max="18"><span class="unit">months from launch (1–18)</span></div>
   <div class="tiles snapt" id="la_snap"></div>
 </section>
+<div class="divider"><span>Launch details</span></div>
 <section id="s-l0" class="sec n">
   <h2><i></i>Launch inputs</h2>
   <div class="inp">
@@ -167,7 +175,7 @@
     <div><label>Return rate rises by <span class="unit">% (you set)</span></label><input type="number" id="la_y" value="20"></div>
     <div><label>Journey length rises by <span class="unit">% (solved for break-even)</span></label><div class="derived" id="la_xOut"></div></div>
   </div>
-  <p class="note">Runs to 31 May 2028. Benefit costs, Used %, milestones, margin and the retention curve come from the sections below, so changing them here or there updates everything.</p>
+  <p class="note">Runs to <span id="la_end2"></span> (the output period in the Snapshot). Benefit costs, Used %, milestones, margin and the retention curve come from the sections below, so changing them here or there updates everything.</p>
 </section>
 <section id="s-lw" class="sec n">
   <h2><i></i>Welcome gifts</h2>
@@ -176,7 +184,7 @@
   <p class="note">Active riders get it at launch. Inactive riders get it only after they come back and pay for a plan.</p>
 </section>
 <section id="s-l2" class="sec r">
-  <h2><i></i><span class="lev">Level 2</span>Totals to 31 May 2028, and the uptick needed</h2>
+  <h2><i></i><span class="lev">Level 2</span>Totals to <span id="la_end1"></span>, and the uptick needed</h2>
   <div class="ups" id="la_ups"></div>
   <table class="lt"><thead><tr><th>Segment</th><th class="r">Riders</th><th class="r">Extra rental days</th><th class="r">Extra margin</th><th class="r">Welcome gifts</th><th class="r">Milestone benefits</th><th class="r">Total cost</th><th class="r">Net</th></tr></thead><tbody id="la_l2"></tbody></table>
 </section>
@@ -221,9 +229,9 @@
 
 <section id="s-cfg" class="sec g">
   <h2><i></i>Additional configs</h2>
-  <h3>Retention variable</h3>
-  <div class="rv"><label for="org">W4 retention variable</label><input type="number" id="org" value="0" step="0.5"><span id="orgNote"></span></div>
-  <p class="note">Use this to move the starting point away from history. <b>Positive</b> = retention will be better anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = retention gets worse anyway. The change is spread across every week the same way, so the shape of the curve stays as in history.</p>
+  <h3>Journey length variable</h3>
+  <div class="rv"><label for="org">Journey length change before the programme <span class="unit">%</span></label><input type="number" id="org" value="0" step="1"><span id="orgNote"></span></div>
+  <p class="note">Use this to move the starting point away from history. <b>Positive</b> = journeys will be longer anyway (other product work), so the programme gets less credit and costs more, which is the conservative case. <b>Negative</b> = journeys get shorter anyway. Every exit rate changes by the same factor, so the shape of the curve stays as in history.</p>
   <h3>After the retention data ends</h3>
   <div class="inp">
     <div><label>Riders who leave each week <span class="unit">%</span></label><input type="number" id="tail" value="6.8"></div>
@@ -234,7 +242,7 @@
 <section id="s-wk" class="sec g">
   <h2><i></i>Break-even math <span class="sub">every four weeks</span></h2>
   <div class="scroll wk"><table id="wkT"><thead><tr>
-    <th>Week</th><th class="r">Bounce Day</th><th class="r">Amount given back by then</th><th class="r">Margin given back by then</th><th class="r">Rider retention today</th><th class="r">Retention for break-even</th><th class="r">Increase needed</th>
+    <th>Week</th><th class="r">Bounce Day</th><th class="r">Amount given back by then</th><th class="r">Margin given back by then</th><th class="r">Journey length needed</th><th class="r">Increase</th>
   </tr></thead><tbody></tbody></table></div>
 </section>
 
@@ -257,25 +265,25 @@
 <section id="s-be" class="sec g">
   <h2><i></i>Break-even at each milestone</h2>
   <div class="scroll"><table id="resT"><thead><tr>
-    <th>Bounce Day</th><th class="r">Riders reaching</th><th class="r">Total cost</th><th class="r">Extra days needed per rider</th><th class="r">Retention increase needed</th>
+    <th>Bounce Day</th><th class="r">Riders reaching</th><th class="r">Total cost</th><th class="r">Extra days needed per rider</th><th class="r">Journey length increase needed</th>
   </tr></thead><tbody></tbody></table></div>
 </section>
 
 <section id="s-ret" class="sec g">
-  <h2><i></i>Rider retention</h2>
+  <h2><i></i>Retention data (input)</h2>
   <table id="retT" style="max-width:720px"><thead><tr><th>Bounce Day</th><th class="r">History %</th><th class="r">Used %</th><th class="r">Riders</th><th class="r">Days left per rider</th></tr></thead><tbody></tbody></table>
 </section>
 
 <section id="s-how" class="sec n">
   <h2><i></i>How it works</h2>
   <div class="formula">
-    Everything follows 1,000 new riders for 18 months (548 Bounce Days). Retention is <b>rider</b> retention: the share of new riders still renting on each Bounce Day, counting each rider once, not bookings or renewals.<br>
+    Everything follows 1,000 new riders for 18 months (548 Bounce Days). Results are stated as <b>journey length</b>: the average rental days in one journey (first plan plus renewals, until the EV is returned), at the current exit rate, compared at the same Bounce Day. The retention data (share of riders reaching each Bounce Day) is only the input that exit rates are taken from.<br>
     Margin per rental day = rent − energy − maintenance − bike − misc. Margin given back is measured against this.<br>
     Cost per grant = cost per use × used %. Cost per rider at a milestone = sum of (benefits given × cost per grant).<br>
-    W4 retention variable: every daily exit rate is multiplied by the same factor, chosen so the share reaching Day 28 moves by the points entered.<br>
-    Results: the model cuts every exit rate by the same %, until the margin on the extra rental days equals the benefit cost over 18 months. Benefits are costed on the improved retention, so riders the programme keeps also earn benefits.<br>
+    Journey length variable: every daily exit rate is divided by (1 + the % entered), so journeys are that much longer or shorter before the programme starts.<br>
+    Results: the model cuts every exit rate by the same %, until the margin on the extra rental days equals the benefit cost. A cut of X in exit rates is journeys longer by 1 ÷ (1 − X) − 1. Benefits are costed on the longer journeys, so riders the programme keeps also earn benefits.<br>
     Every four weeks: the same break-even, counting only costs and rental days up to that week. Early weeks carry costs before most of the extra days arrive, so they need more.<br>
-    Break-even at each milestone: extra days needed per rider = that milestone's cost per rider ÷ margin on an extra day. Retention increase needed = riders that milestone must keep (its extra days ÷ the days a kept rider still rents, including after Day 548), as a share of the 1,000. That is how much retention at the next milestone has to rise.
+    Break-even at each milestone: extra days needed per rider = that milestone's cost per rider ÷ margin on an extra day. Journey length increase needed = those extra days ÷ the days riders reaching that milestone would rent anyway.
   </div>
 </section>
 
@@ -361,12 +369,12 @@ function calc(){
   const perM = {}; MDAYS.forEach(d=>{ perM[d] = BEN.reduce((a,b,i)=>a+(MS[d][b.k]||0)*grant[i],0); });
   const costOn = (S,to=H) => MDAYS.reduce((a,d)=>a+(d<=to ? N*S[d]*perM[d] : 0),0);
 
-  // W4 retention variable
-  const S0 = curve(1), w4h = S0[W4], target = Math.min(0.999, Math.max(0.001, w4h+org));
-  const k0 = org===0 ? 1 : solve(k => curve(k)[W4] <= target, 0, 5);
+  // journey length variable: journeys change by org% before the programme (all exit rates scale by 1/(1+org))
+  const k0 = 1/(1+Math.max(-0.9,org));
   const B = curve(k0);
   LA_CTX = {k0, perDayX, perM, perDay};
-  $('orgNote').textContent = org===0 ? `W4 rider retention ${pct(w4h)} (history)` : `W4 rider retention ${pct(w4h)} → ${pct(B[W4])}`;
+  const JLh = laJL(1).JL0, JLb = laJL(k0).JL0;
+  $('orgNote').textContent = org===0 ? `Journey length ${JLh.toFixed(1)} days (history)` : `Journey length ${JLh.toFixed(1)} → ${JLb.toFixed(1)} days`;
 
   RET.forEach((r,i)=>{ const s=B[r[0]]; $('ru'+i).textContent=(s*100).toFixed(1); $('rn'+i).textContent=num(N*s); $('rd'+i).textContent=Math.round(daysLeft(B,r[0])); });
   EXT.forEach(d=>{ const s=B[d]; $('xh'+d).textContent=(survH(d)*100).toFixed(2); $('xu'+d).textContent=(s*100).toFixed(2); $('xn'+d).textContent=num(N*s); $('xd'+d).textContent=Math.round(daysLeft(B,d)); });
@@ -392,8 +400,8 @@ function calc(){
     const reach = N*B[d], cost = reach*perM[d]; totCost += cost;
     const perRider = perDayX>0 ? perM[d]/perDayX : 0;
     const left = daysLeft(B,d);
-    const keep = (left>0 && perDayX>0) ? cost/perDayX/left : 0;
-    return `<tr><td>Day ${d}</td><td class="r">${num(reach)}</td><td class="r">${rs(cost)}</td><td class="r">${perRider.toFixed(1)}</td><td class="r">${pp(keep/N)}</td></tr>`;
+    const inc = (left>0 && perDayX>0 && reach>0) ? (cost/perDayX)/(reach*left) : 0;   // extra days needed ÷ days these riders would rent anyway
+    return `<tr><td>Day ${d}</td><td class="r">${num(reach)}</td><td class="r">${rs(cost)}</td><td class="r">${perRider.toFixed(1)}</td><td class="r">+${pct(inc)}</td></tr>`;
   });
   $('mcTot').textContent = rs(totCost/N) + ' per new rider';
   $('resT').querySelector('tbody').innerHTML = rows.join('') + `<tr class="tot"><td>Total</td><td></td><td class="r">${rs(totCost)}</td><td></td><td></td></tr>`;
@@ -404,8 +412,7 @@ function calc(){
     const T = Math.min(w*7, H);
     const amt = costOn(B,T), give = amt/(N*daysIn(B,1,T)*perDay);
     const be = breakEven(T);
-    wk.push(`<tr><td>Week ${w}</td><td class="r">${T}</td><td class="r">${rs(amt)}</td><td class="r">${pct(give)}</td><td class="r">${pct(B[T])}</td>
-      <td class="r">${be?pct(be.P[T]):'<span class="neg">Not possible</span>'}</td><td class="r">${be?pp(be.P[T]-B[T]):''}</td></tr>`);
+    wk.push(`<tr><td>Week ${w}</td><td class="r">${T}</td><td class="r">${rs(amt)}</td><td class="r">${pct(give)}</td><td class="r">${be?JLb.toFixed(1)+' → '+(JLb/(1-be.y)).toFixed(1)+' days':'<span class="neg">Not possible</span>'}</td><td class="r">${be?'+'+pct(1/(1-be.y)-1):''}</td></tr>`);
   }
   $('wkT').querySelector('tbody').innerHTML = wk.join('');
 
@@ -416,7 +423,7 @@ function calc(){
   $('tiles').innerHTML = [
     ['Benefit cost per new rider', rs(totCost/N), `${rs(totCost)} for ${num(N)} new riders`],
     ['Margin given back', pct(totCost/baseMargin), `${pct(totCost/(baseDays*rent))} of revenue`],
-    ['W4 rider retention for break-even', be?pct(be.P[W4]):'Not possible', be?`from ${pct(B[W4])} (${pp(be.P[W4]-B[W4])}); every exit rate falls ${pct(be.y,0)}`:'benefits cost more than any retention gain can earn'],
+    ['Journey length needed', be?'+'+pct(1/(1-be.y)-1):'Not possible', be?`${JLb.toFixed(1)} → ${(JLb/(1-be.y)).toFixed(1)} days; exits fall ${pct(be.y,0)}`:'benefits cost more than longer journeys can earn'],
     ['Rental days must grow by', be?pct(extraDays/baseDays,0):'–', be?`${num(extraDays)} extra days on ${num(baseDays)}`:''],
   ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
   launchCalc();
@@ -429,12 +436,12 @@ const LA_GAPS = [['Away 2–14 days',['2-7','8-14']],['Away 15–30 days',['15-2
 const LA_BANDS = [[1,14],[15,28],[29,91],[92,175],[176,100000]];
 const LA_BN = ['1–14','15–28','29–91','92–175','176+'];
 let LA_WG = [{hold:1,pl:0,free:0},{hold:1,pl:0,free:0},{hold:1,pl:1,free:0},{hold:1,pl:1,free:1},{hold:1,pl:1,free:1}];
-const LA_T = 542, LA_DMAX = 1300;           // 7 Dec 2026 to 31 May 2028
+let LA_T = 182; const LA_DMAX = 1300;   // set from the output period
 let LA_CTX = null, LA_H = null, PER = [], PIDX = [];
 const laBand = b => LA_BANDS.findIndex(([lo,hi])=>b>=lo && b<=hi);
 function laPeriods(){
   const P=[], st=new Date(2026,11,7);
-  for(let w=0; w<8; w++){ const s=new Date(st); s.setDate(s.getDate()+7*w); P.push({a:7*w, e:7*w+6, label:`W${w+1} · ${s.getDate()} ${s.toLocaleString('en-GB',{month:'short'})}`}); }
+  for(let w=0; w<8 && 7*w<LA_T; w++){ const s=new Date(st); s.setDate(s.getDate()+7*w); P.push({a:7*w, e:Math.min(LA_T-1,7*w+6), label:`W${w+1} · ${s.getDate()} ${s.toLocaleString('en-GB',{month:'short'})}`}); }
   let a=56, m=new Date(2027,1,1);
   while(a<LA_T){ const nx=new Date(m.getFullYear(), m.getMonth()+1, 1); const len=Math.round((nx-m)/86400000); const e=Math.min(LA_T-1, a+len-1);
     P.push({a, e, label:m.toLocaleString('en-GB',{month:'short'})+' '+m.getFullYear()}); a=e+1; m=nx; }
@@ -464,13 +471,25 @@ function laEval(k, Yf, q){
   return out;
 }
 const laSum = a => a.reduce((x,y)=>x+y,0);
+// journey length = 1 / exit rate per rental day, bands weighted by active riders at launch
+function laJL(k){
+  LA_H = laHaz(); const {S} = laSurv(k);
+  const bandH = LA_BANDS.map(([lo,hi])=>{ let n=0,dn=0; for(let d=lo; d<=Math.min(hi,LA_DMAX); d++){ n+=S[d]*Math.min(1,k*LA_H[d]); dn+=S[d]; } return n/dn; });
+  const actN = LA_BANDS.map(([lo,hi])=>Object.entries(LA_ACTIVE).reduce((a,[b,n])=>a+((+b>=lo&&+b<=hi)?n:0),0)), actT = laSum(actN);
+  return {JL0: 1/actN.reduce((a,n,i)=>a+n/actT*bandH[i],0), bandH, actN, actT};
+}
 const laMoney = v => { const s=v<0?'−':''; v=Math.abs(v); return s+(v>=1e7 ? '₹'+(v/1e7).toFixed(2)+' Cr' : '₹'+(v/1e5).toFixed(1)+'L'); };
 function launchCalc(){
   if(!LA_CTX || !$('la_l2')) return;
   const {k0, perDayX, perDay} = LA_CTX;
   const gk = {}; BEN.forEach(b=>gk[b.k]=b.c*b.u/100); LA_CTX.grantK = gk;
+  const M = Math.min(18, Math.max(1, Math.round(+$('la_months').value||6)));
+  const st = new Date(2026,11,7), en = new Date(2026,11+M,7); LA_T = Math.round((en-st)/86400000);
+  const last = new Date(en); last.setDate(last.getDate()-1);
+  const endTxt = `${last.getDate()} ${last.toLocaleString('en-GB',{month:'short'})} ${last.getFullYear()}`;
   LA_H = laHaz(); PER = laPeriods(); const NP=PER.length;
   const Y=+$('la_y').value/100, q=+$('la_new').value/7;
+  $('la_end1').textContent = endTxt; $('la_end2').textContent = endTxt;
   // welcome gift table
   $('la_wgT').innerHTML = LA_BN.map((n,i)=>`<tr><td>${n}</td>${['hold','pl','free'].map(k=>`<td class="r"><input type="number" class="sm" data-wg="${i}" data-k="${k}" value="${LA_WG[i][k]}"></td>`).join('')}<td class="r">${rs(LA_WG[i].hold*gk.hold+LA_WG[i].pl*gk.pl+LA_WG[i].free*gk.free)}</td></tr>`).join('');
   const base = laEval(k0, 0, q);
@@ -493,10 +512,7 @@ function launchCalc(){
   if(X!==null && X>0){ let lo=Math.max(0,X-0.01), hi=Math.min(0.9,X+0.01); for(let i=0;i<30;i++){ const mid=(lo+hi)/2; if(seg(laEval(k0*(1-mid),Y,q)).cum[NP-1]>=0) hi=mid; else lo=mid; } X=hi; }
   const R = seg(laEval(k0*(1-(X??0)), Y, q));
   // journey length: 1 / weighted exit rate per rental day (bands weighted by active riders at launch)
-  const {S:S0} = laSurv(k0);
-  const bandH = LA_BANDS.map(([lo,hi])=>{ let n=0,dn=0; for(let d=lo; d<=Math.min(hi,LA_DMAX); d++){ n+=S0[d]*Math.min(1,k0*LA_H[d]); dn+=S0[d]; } return n/dn; });
-  const actN = LA_BANDS.map(([lo,hi])=>Object.entries(LA_ACTIVE).reduce((a,[b,n])=>a+((+b>=lo&&+b<=hi)?n:0),0)), actT=laSum(actN);
-  const JL0 = 1/actN.reduce((a,n,i)=>a+n/actT*bandH[i],0);
+  const {JL0, bandH, actN, actT} = laJL(k0);
   const jl = x => x===null ? null : JL0/(1-x);
   const inact = laSum(LA_BINS.map(b=>b[1])), natN = laSum(LA_BINS.map(b=>b[1]*b[4]/100)), rr0 = natN/inact;
   $('la_rrBase').textContent = pct(rr0);
@@ -511,7 +527,7 @@ function launchCalc(){
   const baseDays = laSum(base.nw.d) + base.act.reduce((a,o)=>a+laSum(o.d),0) + base.nat.reduce((a,o)=>a+laSum(o.d),0);
   const totCost = T2.g + T2.m;
   $('la_snap').innerHTML = [
-    ['Time period', '18 months', '7 Dec 2026 to 31 May 2028'],
+    ['Time period', `${M} month${M>1?'s':''}`, `7 Dec 2026 to ${endTxt}`],
     ['Total cost', laMoney(totCost), `welcome gifts ${laMoney(T2.g)} + milestones ${laMoney(T2.m)}`],
     ['Margin given back', pct(totCost/(baseDays*perDay)), `of the margin all riders earn in the period`],
     ['Journey length needed', X===null?'Not reachable':`+${pct(1/(1-X)-1)}`, X===null?'benefits cost more than longer journeys can earn':`${JL0.toFixed(1)} → ${jl(X).toFixed(1)} days`],
