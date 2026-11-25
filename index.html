@@ -91,6 +91,19 @@
   #msT th,#msT td{padding-left:14px;padding-right:14px}
   #msT td.how{min-width:420px;white-space:normal}
   #msT th:first-child,#msT td:first-child{white-space:nowrap}
+  .snap{border-color:var(--red-l)}
+  .prop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .pc{background:var(--red-t);border:1px solid var(--red-l);border-radius:14px;padding:16px 16px 14px;position:relative}
+  .pc .pn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:700;margin-bottom:8px}
+  .pc b{display:block;font-size:16px;color:var(--h)}
+  .pc p{font-size:13px;color:var(--b);margin-top:6px;line-height:1.45}
+  table.slim{max-width:760px}
+  .snapt{grid-template-columns:repeat(5,1fr)}
+  .snapt .tile:nth-child(n){background:#fff;border-color:var(--line)} .snapt .tile:before{background:#9AA3B5}
+  .snapt .tile:nth-child(2) .v,.snapt .tile:nth-child(3) .v{color:var(--red)} .snapt .tile:nth-child(2):before,.snapt .tile:nth-child(3):before{background:var(--red)}
+  .snapt .tile:nth-child(4) .v,.snapt .tile:nth-child(5) .v{color:var(--green)} .snapt .tile:nth-child(4):before,.snapt .tile:nth-child(5):before{background:var(--green)}
+  .snapt .tile:nth-child(1) .v{color:var(--h)}
+  #nav a.snapnav{font-weight:600;margin-top:4px}
   td.gap,th.gap{width:18px;min-width:18px;padding:0;border:0;background:#fff!important}
   tr.segtop td{border-top:2px solid var(--line)}
   .lev{display:inline-block;font-size:11.5px;font-weight:700;color:var(--red);background:var(--red-t);padding:2px 8px;border-radius:6px;margin-right:4px}
@@ -111,7 +124,7 @@
 <body>
 <aside class="side">
   <div class="brand"><span class="logo">B</span><div><b>Bounce Days</b><small>Break-even model</small></div></div>
-  <nav id="nav"><div class="grp">Launch</div><a href="#s-l1" data-s="s-l1"><i class="r"></i>Who pays, who earns</a><a href="#s-lm" data-s="s-lm"><i class="g"></i>Metrics to watch</a><a href="#s-l0" data-s="s-l0"><i class="n"></i>Launch inputs</a><a href="#s-lw" data-s="s-lw"><i class="n"></i>Welcome gifts</a><a href="#s-l2" data-s="s-l2"><i class="r"></i>Totals and uptick</a><a href="#s-l3" data-s="s-l3"><i class="g"></i>Week by week</a><a href="#s-l4" data-s="s-l4"><i class="g"></i>By bucket</a><div class="grp">Math</div><a href="#s-res" data-s="s-res"><i class="r"></i>Output summary</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-cfg" data-s="s-cfg"><i class="g"></i>Additional configs</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Break-even math</a><div class="grp">Benefits cost</div><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits' cost</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><div class="grp">Method</div><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
+  <nav id="nav"><a class="snapnav" href="#s-snap" data-s="s-snap"><i class="r"></i>Snapshot</a><div class="grp">Launch</div><a href="#s-l0" data-s="s-l0"><i class="n"></i>Launch inputs</a><a href="#s-lw" data-s="s-lw"><i class="n"></i>Welcome gifts</a><a href="#s-l2" data-s="s-l2"><i class="r"></i>Totals and uptick</a><a href="#s-l3" data-s="s-l3"><i class="g"></i>Week by week</a><a href="#s-l4" data-s="s-l4"><i class="g"></i>By bucket</a><div class="grp">Math</div><a href="#s-res" data-s="s-res"><i class="r"></i>Output summary</a><a href="#s-inp" data-s="s-inp"><i class="n"></i>Inputs</a><a href="#s-cfg" data-s="s-cfg"><i class="g"></i>Additional configs</a><a href="#s-wk" data-s="s-wk"><i class="g"></i>Break-even math</a><div class="grp">Benefits cost</div><a href="#s-ben" data-s="s-ben"><i class="r"></i>Benefits' cost</a><a href="#s-ms" data-s="s-ms"><i class="r"></i>Milestones</a><a href="#s-be" data-s="s-be"><i class="g"></i>Break-even by milestone</a><a href="#s-ret" data-s="s-ret"><i class="g"></i>Rider retention</a><div class="grp">Method</div><a href="#s-how" data-s="s-how"><i class="n"></i>How it works</a><a href="#s-src" data-s="s-src"><i class="n"></i>Sources</a></nav>
   <button class="reset" onclick="location.reload()">↺ Reset all values</button>
 </aside>
 <div class="wrap">
@@ -119,22 +132,32 @@
 <header class="hero"><span class="eyebrow">Retention programme</span><h1>Bounce Days: cost and break-even model</h1>
 <span class="dummy">Retention and rent from data: riders whose first rental was on or after 15 Jan 2026, data to 24 Nov 2026. See Sources.</span></header>
 
-<section id="s-l1" class="sec r">
-  <h2><i></i><span class="lev">Level 1</span>Who pays, who earns</h2>
-  <table><thead><tr><th>Segment</th><th>Who</th><th>Extra money from</th><th>Cost we spend</th></tr></thead><tbody><tr><td><b>New riders</b></td><td>First rental on or after 7 Dec</td><td>Extra days from longer journeys</td><td>Milestone benefits</td></tr><tr><td><b>Active riders</b></td><td>Renting on 7 Dec</td><td>Extra days from longer journeys</td><td>Welcome gift + milestone benefits</td></tr><tr><td><b>Natural returners</b></td><td>Inactive on 7 Dec, would have come back anyway</td><td>Extra days from longer journeys after return</td><td>Welcome gift + milestone benefits</td></tr><tr><td><b>Extra returners</b></td><td>Inactive on 7 Dec, came back because of the programme</td><td>All their rental days after return</td><td>Welcome gift + milestone benefits</td></tr></tbody></table>
-  <p class="note">Every rider is tagged once, by where they were on 7 Dec, and keeps that tag. A rider's rental days are counted in one segment only.</p>
-</section>
-<section id="s-lm" class="sec g">
-  <h2><i></i>Metrics to watch</h2>
-  <div class="ups">
-    <div class="up"><div class="k">Metric 1 · every renting rider</div><div class="v" style="font-size:22px">Journey length (projected)</div>
-      <div class="d"><b>What:</b> the average number of rental days in one journey (first plan plus all renewals, until the EV is returned or recovered and not recharged within 24 hours), at the current exit rate. Exit rates are taken within each Bounce Day band and combined with fixed weights.<br><br>
-      <b>Why this one:</b> it covers new, active and returned riders together; plan length (1-day vs 7-day) doesn't distort it; it can be read every week; and it converts straight into rental days, which is what pays for the benefits. Compared with a holdout that doesn't get Bounce Days.</div></div>
-    <div class="up"><div class="k">Metric 2 · riders inactive on 7 Dec</div><div class="v" style="font-size:22px">Return rate (90 days)</div>
-      <div class="d"><b>What:</b> the share of riders inactive on 7 Dec who pay for a plan within 90 days of launch.<br><br>
-      <b>Why this one:</b> bringing riders back is the other way the programme earns, separate from how long they stay once back. Riders who'd return anyway (<span id="la_rrBase"></span> today) set the baseline; only returns above it count. Compared with a holdout.</div></div>
+<section id="s-snap" class="sec r snap">
+  <h2><i></i>Snapshot</h2>
+  <div class="prop">
+    <div class="pc"><span class="pn">1</span><b>At launch: welcome benefits</b><p>Every existing rider gets a one-time gift, sized by their Bounce Days. Inactive riders get it after they come back and pay.</p></div>
+    <div class="pc"><span class="pn">2</span><b>Bounce Days counted on actuals</b><p>Each rider starts from the paid rental days they already have. Nothing is reset.</p></div>
+    <div class="pc"><span class="pn">3</span><b>Same milestones for everyone</b><p>New and existing riders follow one milestone schedule, from their current Bounce Day onwards.</p></div>
   </div>
-  <p class="note"><b>Not used as headlines:</b> W4 retention covers only new riders and only their first 4 weeks, so it's kept as a check for new riders. Weekly snapshot retention is distorted by 7-day plans.</p>
+
+  <h3>Who pays, who earns</h3>
+  <table class="slim"><thead><tr><th>Segment</th><th>Extra money from</th><th>Cost</th></tr></thead><tbody>
+    <tr><td><b>New riders</b></td><td>Longer journeys</td><td>Milestones</td></tr>
+    <tr><td><b>Active riders</b></td><td>Longer journeys</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Natural returners</b></td><td>Longer journeys after return</td><td>Welcome gift + milestones</td></tr>
+    <tr><td><b>Extra returners</b></td><td>All their rental days after return</td><td>Welcome gift + milestones</td></tr>
+  </tbody></table>
+
+  <h3>Metrics to watch</h3>
+  <div class="ups">
+    <div class="up"><div class="k">All renting riders</div><div class="v" style="font-size:20px">Journey length (projected)</div>
+      <div class="d">Average rental days in one journey (first plan plus renewals, until the EV is returned), at the current exit rate, compared at the same Bounce Day. Covers every rider, isn't skewed by plan length, readable weekly, and converts straight into rental days.</div></div>
+    <div class="up"><div class="k">Riders inactive on 7 Dec</div><div class="v" style="font-size:20px">Return rate (90 days)</div>
+      <div class="d">Share who pay for a plan within 90 days of launch. Only returns above the natural rate (<span id="la_rrBase"></span>) count.</div></div>
+  </div>
+
+  <h3>Output summary</h3>
+  <div class="tiles snapt" id="la_snap"></div>
 </section>
 <section id="s-l0" class="sec n">
   <h2><i></i>Launch inputs</h2>
@@ -342,7 +365,7 @@ function calc(){
   const S0 = curve(1), w4h = S0[W4], target = Math.min(0.999, Math.max(0.001, w4h+org));
   const k0 = org===0 ? 1 : solve(k => curve(k)[W4] <= target, 0, 5);
   const B = curve(k0);
-  LA_CTX = {k0, perDayX, perM};
+  LA_CTX = {k0, perDayX, perM, perDay};
   $('orgNote').textContent = org===0 ? `W4 rider retention ${pct(w4h)} (history)` : `W4 rider retention ${pct(w4h)} → ${pct(B[W4])}`;
 
   RET.forEach((r,i)=>{ const s=B[r[0]]; $('ru'+i).textContent=(s*100).toFixed(1); $('rn'+i).textContent=num(N*s); $('rd'+i).textContent=Math.round(daysLeft(B,r[0])); });
@@ -444,7 +467,7 @@ const laSum = a => a.reduce((x,y)=>x+y,0);
 const laMoney = v => { const s=v<0?'−':''; v=Math.abs(v); return s+(v>=1e7 ? '₹'+(v/1e7).toFixed(2)+' Cr' : '₹'+(v/1e5).toFixed(1)+'L'); };
 function launchCalc(){
   if(!LA_CTX || !$('la_l2')) return;
-  const {k0, perDayX} = LA_CTX;
+  const {k0, perDayX, perDay} = LA_CTX;
   const gk = {}; BEN.forEach(b=>gk[b.k]=b.c*b.u/100); LA_CTX.grantK = gk;
   LA_H = laHaz(); PER = laPeriods(); const NP=PER.length;
   const Y=+$('la_y').value/100, q=+$('la_new').value/7;
@@ -485,6 +508,15 @@ function launchCalc(){
   const rowsL2 = [['New riders', q*LA_T, agg([R.nw])], ['Active riders', actT, agg(R.act)], ['Natural returners', natN, agg(R.nat)], ['Extra returners', natN*Y, agg(R.ext)]];
   const T2 = {d:0,mg:0,g:0,m:0}; rowsL2.forEach(([, ,o])=>{ for(const k in T2) T2[k]+=o[k]; });
   const cells = o => `<td class="r">${num(o.d)}</td><td class="r">${laMoney(o.mg)}</td><td class="r">${o.g?laMoney(o.g):'–'}</td><td class="r">${laMoney(o.m)}</td><td class="r">${laMoney(o.g+o.m)}</td><td class="r ${o.mg-o.g-o.m>=0?'pos':'negv'}">${Math.abs(o.mg-o.g-o.m)<5e4?'≈ ₹0':(o.mg-o.g-o.m>0?'+':'')+laMoney(o.mg-o.g-o.m)}</td>`;
+  const baseDays = laSum(base.nw.d) + base.act.reduce((a,o)=>a+laSum(o.d),0) + base.nat.reduce((a,o)=>a+laSum(o.d),0);
+  const totCost = T2.g + T2.m;
+  $('la_snap').innerHTML = [
+    ['Time period', '18 months', '7 Dec 2026 to 31 May 2028'],
+    ['Total cost', laMoney(totCost), `welcome gifts ${laMoney(T2.g)} + milestones ${laMoney(T2.m)}`],
+    ['Margin given back', pct(totCost/(baseDays*perDay)), `of the margin all riders earn in the period`],
+    ['Journey length needed', X===null?'Not reachable':`+${pct(1/(1-X)-1)}`, X===null?'benefits cost more than longer journeys can earn':`${JL0.toFixed(1)} → ${jl(X).toFixed(1)} days`],
+    ['Return rate needed', `+${pct(Y,0)}`, `${pct(rr0)} → ${pct(rr0*(1+Y))} · ${num(natN*Y)} extra riders`],
+  ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
   $('la_l2').innerHTML = rowsL2.map(([n,r,o])=>`<tr><td>${n}</td><td class="r">${num(r)}</td>${cells(o)}</tr>`).join('') + `<tr class="tot"><td>Total</td><td></td>${cells(T2)}</tr>`;
   // Level 3
   const segP = (list,p,key) => list.reduce((a,s)=>a+s[key][p],0);
