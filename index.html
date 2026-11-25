@@ -423,13 +423,14 @@ function calc(){
   // results (18 months)
   const baseDays = N*daysIn(B), baseMargin = baseDays*perDay;
   const be = breakEven(H);
-  const extraDays = be ? N*daysIn(be.P)-baseDays : NaN;
+  const extraDays = be ? N*daysIn(be.P)-N*(1-be.P[H])*pR/(1-pR)*15-baseDays : NaN;
+  const jDays = be ? N*daysIn(curve(k0*(1-be.y)))-baseDays : NaN;
   $('tiles').innerHTML = [
     ['Benefit cost per new rider', rs(totCost/N), `${rs(totCost)} for ${num(N)} new riders`],
     ['Margin given back', pct(totCost/baseMargin), `${pct(totCost/(baseDays*rent))} of revenue`],
     ['Journey length needed', be?'+'+pct(1/(1-be.y)-1):'Not possible', be?`${JLb.toFixed(1)} → ${(JLb/(1-be.y)).toFixed(1)} days; exits fall ${pct(be.y,0)}`:'benefits cost more than longer journeys can earn'],
     ['Return rate needed (30 days)', '+'+pct(Yr,0), `after a journey ends ${pct(R0m)} → ${pct(R0m*(1+Yr))} (set in Launch inputs)`],
-    ['Rental days must grow by', be?pct(extraDays/baseDays,0):'–', be?`${num(extraDays)} extra days on ${num(baseDays)}`:''],
+    ['Extra rental days needed', be?'+'+pct(extraDays/baseDays,0):'–', be?`${num(extraDays)} days: ${num(jDays)} from longer journeys + ${num(extraDays-jDays)} from returns`:''],
   ].map(([k,v,d])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
   launchCalc();
 }
